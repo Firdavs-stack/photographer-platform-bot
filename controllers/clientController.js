@@ -2,7 +2,7 @@
 
 const Client = require("../models/client");
 const Booking = require("../models/booking");
-const Photographer = require("../models/photographer");
+const Photographer = require("../models/Photographer");
 const stateController = require("./stateController");
 const { isDefaultCommand } = require("./photographerController");
 

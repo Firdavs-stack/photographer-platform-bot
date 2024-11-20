@@ -1,6 +1,6 @@
 // controllers/photographerController.js
 
-const Photographer = require("../models/photographer");
+const Photographer = require("../models/Photographer");
 const Booking = require("../models/booking");
 const Client = require("../models/client");
 const stateController = require("./stateController");

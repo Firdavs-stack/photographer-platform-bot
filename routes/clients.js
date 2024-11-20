@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Client = require("../models/client"); // Модель клиента
-const Photographer = require("../models/photographer"); // Модель фотографа
+const Photographer = require("../models/Photographer"); // Модель фотографа
 const axios = require("axios");
 const { setUserState } = require("../utils/stateManager");
 const multer = require("multer");
