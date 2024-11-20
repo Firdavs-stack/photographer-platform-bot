@@ -5,7 +5,7 @@ const photographerController = require("./controllers/photographerController");
 const callbackHandler = require("./controllers/callbackHandler");
 const stateController = require("./controllers/stateController");
 const Client = require("./models/client");
-const Photographer = require("./models/photographer");
+const Photographer = require("./models/Photographer");
 const Booking = require("./models/booking");
 
 // Инициализация бота
