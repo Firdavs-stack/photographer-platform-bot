@@ -14,10 +14,13 @@ const bot = new TelegramBot("7456265736:AAH8zdizZ8nvXo2N8kTHmOWIO9yn-1TYYU8", {
 });
 
 // Подключение к базе данных
-mongoose.connect("mongodb://localhost:27017/photography_platform", {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-});
+mongoose.connect(
+	"mongodb+srv://firdavsusmanov418:gPPbpsmhIDE5sf9b@cluster0.owmnn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+	{
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	}
+);
 
 // Регистрация обработчиков для клиентов и фотографов
 bot.on("message", async (msg) => {
