@@ -53,7 +53,7 @@ bot.on("message", async (msg) => {
 								{
 									text: "🔍 Открыть поиск фотографов",
 									web_app: {
-										url: "https://thumbnail-infrastructure-ground-ul.trycloudflare.com",
+										url: "https://two2one.uz/",
 									},
 								},
 							],
