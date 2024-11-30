@@ -6,6 +6,7 @@ const Client = require("../models/client");
 const stateController = require("./stateController");
 const axios = require("axios");
 const fs = require("fs");
+const path = require("path");
 
 // Определяем команды по умолчанию для фотографов
 const photographerDefaultCommands = [
