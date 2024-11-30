@@ -470,7 +470,7 @@ async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 			`${path.resolve(
 				sourceDir,
 				"two2one.uz/images/portfolio"
-			)}${Date.now()}_${tempPhotosp[0].file_id}.png`
+			)}${Date.now()}_${tempPhotos[0].file_id}.png`
 		);
 		for (const photo of tempPhotos) {
 			const file = await bot.getFile(photo.file_id);
