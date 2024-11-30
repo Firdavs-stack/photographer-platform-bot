@@ -463,10 +463,16 @@ async function chooseNamingPortfolioPhotos(bot, chatId, text, state) {
 // Функция для сохранения фотографий в портфолио
 async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 	try {
-		console.log("SISKI", tempPhotos);
+		console.log(
+			"SISKI",
+			`${path.resolve(
+				sourceDir,
+				"two2one.uz/images/portfolio"
+			)}${Date.now()}_${photo.file_id}.png`
+		);
 		for (const photo of tempPhotos) {
 			const file = await bot.getFile(photo.file_id);
-			const filePath = file.file._path;
+			const filePath = file.file_path;
 			console.log(file, filePath);
 			const downloadUrl = `https://api.telegram.org/file/bot${bot.token}/${filePath}`;
 
