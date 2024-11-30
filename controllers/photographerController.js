@@ -8,6 +8,7 @@ const stateController = require("./stateController");
 const axios = require("axios");
 const fs = require("fs");
 
+const sourceDir = path.resolve(__dirname, "../../..");
 // Определяем команды по умолчанию для фотографов
 const photographerDefaultCommands = [
 	"📸 Добавить портфолио",
