@@ -6,7 +6,6 @@ const Client = require("../models/client");
 const stateController = require("./stateController");
 const axios = require("axios");
 const fs = require("fs");
-const path = require("path");
 
 // Определяем команды по умолчанию для фотографов
 const photographerDefaultCommands = [
@@ -477,7 +476,7 @@ async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 				sourceDir,
 				"two2one.uz/images/portfolio"
 			)}${Date.now()}_${photo.file_id}.jpg`;
-			console.log("SIIIU", filename);
+			console.log("SIIIU", file);
 			const writer = fs.createWriteStream(filename);
 			axiosResponse.data.pipe(writer);
 
