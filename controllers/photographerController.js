@@ -1,5 +1,6 @@
 // controllers/photographerController.js
 
+const path = require("path");
 const Photographer = require("../models/Photographer");
 const Booking = require("../models/booking");
 const Client = require("../models/client");
