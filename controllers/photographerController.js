@@ -471,9 +471,10 @@ async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 			const axiosResponse = await axios.get(downloadUrl, {
 				responseType: "stream",
 			});
-			const filename = `uploads/portfolio/${Date.now()}_${
-				photo.file_id
-			}.jpg`;
+			const filename = `${path.resolve(
+				sourceDir,
+				"two2one.uz/images/portfolio"
+			)}${Date.now()}_${photo.file_id}.jpg`;
 			const writer = fs.createWriteStream(filename);
 			axiosResponse.data.pipe(writer);
 
