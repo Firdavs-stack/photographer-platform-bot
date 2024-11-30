@@ -421,7 +421,7 @@ async function chooseNamingPortfolioPhotos(bot, chatId, text, state) {
 		telegramId: chatId.toString(),
 	});
 
-	console.log(tempPhotos, photographer);
+	console.log("PISKA", tempPhotos, photographer);
 
 	if (text !== "/done") {
 		// Разделяем текст на пары "Название; Категория" по разделителю "|"
