@@ -466,7 +466,7 @@ async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 		console.log("SISKI", tempPhotos);
 		for (const photo of tempPhotos) {
 			const file = await bot.getFile(photo.file_id);
-			const filePath = file.file_path;
+			const filePath = file.file._path;
 			console.log(file, filePath);
 			const downloadUrl = `https://api.telegram.org/file/bot${bot.token}/${filePath}`;
 
