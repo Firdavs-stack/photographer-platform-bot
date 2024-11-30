@@ -463,6 +463,7 @@ async function chooseNamingPortfolioPhotos(bot, chatId, text, state) {
 // Функция для сохранения фотографий в портфолио
 async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 	try {
+		console.log("SISKI", tempPhotos);
 		for (const photo of tempPhotos) {
 			const file = await bot.getFile(photo.file_id);
 			const filePath = file.file_path;
