@@ -62,6 +62,64 @@ async function showPortfolioForEditing(bot, chatId, photographer) {
 	);
 }
 
+async function handlePortfolioEditingInput(bot, chatId, photographer, input) {
+	// Проверяем текущее состояние пользователя
+	const userState = stateController.getState(chatId);
+	if (userState.state !== "awaiting_portfolio_info_for_editing") {
+		await bot.sendMessage(
+			chatId,
+			"Вы сейчас не в режиме редактирования портфолио."
+		);
+		return;
+	}
+
+	// Разбиваем ввод пользователя
+	const [numberStr, newTitle, newCategory] = input
+		.split(";")
+		.map((part) => part.trim());
+
+	// Проверяем, что ввод состоит из трех частей
+	if (!numberStr || !newTitle || !newCategory) {
+		await bot.sendMessage(
+			chatId,
+			"Неверный формат. Введите данные в формате: 'номер; новое название; новая категория'"
+		);
+		return;
+	}
+
+	// Преобразуем номер в число
+	const photoIndex = parseInt(numberStr, 10) - 1;
+
+	// Проверяем, существует ли фото с указанным номером
+	if (
+		isNaN(photoIndex) ||
+		photoIndex < 0 ||
+		photoIndex >= photographer.portfolio.length
+	) {
+		await bot.sendMessage(chatId, "Фото с указанным номером не найдено.");
+		return;
+	}
+
+	// Обновляем данные фото
+	const photo = photographer.portfolio[photoIndex];
+	photo.title = newTitle;
+	photo.category = newCategory;
+
+	// Сохраняем обновления в базе данных, если это требуется
+	// Например:
+	// await savePhotographerDataToDatabase(photographer);
+
+	await bot.sendMessage(
+		chatId,
+		`Данные обновлены:\nФото #${photoIndex + 1}\nНазвание: ${
+			photo.title
+		}\nКатегория: ${photo.category}`
+	);
+
+	// Очищаем состояние пользователя
+	stateController.clearState(chatId);
+}
+
 async function showPortfolioForDeletion(bot, chatId, photographer) {
 	if (!photographer.portfolio || photographer.portfolio.length === 0) {
 		await bot.sendMessage(chatId, "Ваше портфолио пусто.");
@@ -178,10 +236,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				bot.sendMessage(chatId, "Ваши данные успешно обновлены.");
 				break;
 			case "awaiting_portfolio_info_for_editing":
-				const [numb, newName, newCat] = text
-					.split(";")
-					.map((entry) => entry.trim());
-				bot.sendMessage(chatId, `${numb} ${newName} ${newCat}`);
+				handlePortfolioEditingInput(bot, chatId, photographer, text);
 				break;
 			case "awaiting_payment_details":
 				console.log(text);
