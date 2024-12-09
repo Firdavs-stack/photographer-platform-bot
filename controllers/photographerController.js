@@ -178,7 +178,10 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				bot.sendMessage(chatId, "Ваши данные успешно обновлены.");
 				break;
 			case "awaiting_portfolio_info_for_editing":
-				bot.sendMessage(chatId, "HEHE");
+				const [numb, newName, newCat] = text
+					.split(";")
+					.map((entry) => entry.trim());
+				bot.sendMessage(chatId, `${numb} ${newName} ${newCat}`);
 				break;
 			case "awaiting_payment_details":
 				console.log(text);
