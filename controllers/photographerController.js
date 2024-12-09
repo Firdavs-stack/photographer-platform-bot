@@ -1,5 +1,6 @@
 // controllers/photographerController.js
 
+const path = require("path");
 const Photographer = require("../models/Photographer");
 const Booking = require("../models/booking");
 const Client = require("../models/client");
@@ -8,7 +9,6 @@ const axios = require("axios");
 const fs = require("fs");
 
 const sourceDir = path.resolve(__dirname, "../../..");
-
 // Определяем команды по умолчанию для фотографов
 const photographerDefaultCommands = [
 	"📸 Добавить портфолио",
@@ -39,10 +39,6 @@ async function showPortfolioForEditing(bot, chatId, photographer) {
 		return;
 	}
 
-	await stateController.setState(chatId, {
-		state: "awaiting_portfolio_info_for_editing",
-	});
-
 	const portfolioMessages = photographer.portfolio.map((photo, index) => {
 		return {
 			type: "photo",
@@ -58,7 +54,12 @@ async function showPortfolioForEditing(bot, chatId, photographer) {
 
 	await bot.sendMessage(
 		chatId,
-		"Чтобы изменить данные о фото, введите номер фото и новые данные в формате: 'номер; новое название; новая категория'"
+		"Чтобы изменить данные о фото, введите номер фото и новые данные в формате: 'номер; новое название; новая категория'",
+		{
+			reply_markup: {
+				force_reply: true,
+			},
+		}
 	);
 }
 
@@ -103,12 +104,14 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 	const text = msg.text.trim();
 	let state = await stateController.getState(chatId);
 	console.log(chatId);
-	console.log(text, state, "MAMAMAM");
 	if (isDefaultCommand(text, photographerDefaultCommands) && state) {
 		await stateController.clearState(chatId);
 		state = null; // Обновляем переменную state после очистки
 		// Продолжаем выполнение для обработки команды по умолчанию
 	}
+
+	console.log(text, state);
+
 	// Обработка различных состояний фотографа
 	if (state) {
 		switch (state.state) {
@@ -174,15 +177,6 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				await stateController.clearState(chatId);
 
 				bot.sendMessage(chatId, "Ваши данные успешно обновлены.");
-				break;
-			case "awaiting_portfolio_info_for_editing":
-				const [numb, newNaming, newCategory] = text
-					.split(";")
-					.map((entry) => entry.trim);
-				bot.sendMessage(
-					chatId,
-					`Вы ввели ${(numb, newNaming, newCategory)}`
-				);
 				break;
 			case "awaiting_payment_details":
 				console.log(text);
@@ -429,7 +423,7 @@ async function chooseNamingPortfolioPhotos(bot, chatId, text, state) {
 		telegramId: chatId.toString(),
 	});
 
-	console.log(tempPhotos, photographer);
+	console.log("PISKA", tempPhotos, photographer);
 
 	if (text !== "/done") {
 		// Разделяем текст на пары "Название; Категория" по разделителю "|"
@@ -461,7 +455,6 @@ async function chooseNamingPortfolioPhotos(bot, chatId, text, state) {
 			bot.sendMessage(chatId, "Вы не отправили ни одной фотографии.");
 			return;
 		}
-		console.log(tempPhotos);
 		await savePhotosToPortfolio(bot, photographer, tempPhotos, chatId);
 
 		await stateController.clearState(chatId);
@@ -472,6 +465,13 @@ async function chooseNamingPortfolioPhotos(bot, chatId, text, state) {
 // Функция для сохранения фотографий в портфолио
 async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 	try {
+		console.log(
+			"SISKI",
+			`${path.resolve(
+				sourceDir,
+				"two2one.uz/images/portfolio"
+			)}${Date.now()}_${tempPhotos[0].file_id}.png`
+		);
 		for (const photo of tempPhotos) {
 			const file = await bot.getFile(photo.file_id);
 			const filePath = file.file_path;
