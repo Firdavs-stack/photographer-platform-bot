@@ -39,6 +39,11 @@ async function showPortfolioForEditing(bot, chatId, photographer) {
 		return;
 	}
 
+	stateController.setState(chatId, {
+		state: "awaiting_portfolio_info_for_editing",
+	});
+
+	bot.sendMessage(chatId, stateController.getState().state);
 	const portfolioMessages = photographer.portfolio.map((photo, index) => {
 		return {
 			type: "photo",
