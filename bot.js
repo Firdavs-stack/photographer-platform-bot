@@ -40,7 +40,7 @@ bot.on("message", async (msg) => {
 		return;
 	}
 
-	bot.sendMessage(chatId, `${msg}`);
+	bot.sendMessage(chatId, `${msg.text}`);
 
 	if (client) {
 		if (msg.text === "🔍 Поиск фотографов") {
