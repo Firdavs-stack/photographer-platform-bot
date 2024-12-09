@@ -177,6 +177,9 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 
 				bot.sendMessage(chatId, "Ваши данные успешно обновлены.");
 				break;
+			case "awaiting_portfolio_info_for_editing":
+				bot.sendMessage(chatId, "HEHE");
+				break;
 			case "awaiting_payment_details":
 				console.log(text);
 				photographer.paymentDetails = text;
