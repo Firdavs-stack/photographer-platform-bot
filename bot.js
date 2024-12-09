@@ -40,6 +40,8 @@ bot.on("message", async (msg) => {
 		return;
 	}
 
+	bot.sendMessage(chatId, `${msg}`);
+
 	if (client) {
 		if (msg.text === "🔍 Поиск фотографов") {
 			// Отправляем inline_keyboard с Web App кнопкой для поиска фотографов
