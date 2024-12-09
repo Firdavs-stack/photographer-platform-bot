@@ -43,7 +43,6 @@ async function showPortfolioForEditing(bot, chatId, photographer) {
 		state: "awaiting_portfolio_info_for_editing",
 	});
 
-	bot.sendMessage(chatId, stateController.getState().state);
 	const portfolioMessages = photographer.portfolio.map((photo, index) => {
 		return {
 			type: "photo",
@@ -59,12 +58,7 @@ async function showPortfolioForEditing(bot, chatId, photographer) {
 
 	await bot.sendMessage(
 		chatId,
-		"Чтобы изменить данные о фото, введите номер фото и новые данные в формате: 'номер; новое название; новая категория'",
-		{
-			reply_markup: {
-				force_reply: true,
-			},
-		}
+		"Чтобы изменить данные о фото, введите номер фото и новые данные в формате: 'номер; новое название; новая категория'"
 	);
 }
 
