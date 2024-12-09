@@ -104,6 +104,7 @@ async function handlePortfolioEditingInput(bot, chatId, photographer, input) {
 	const photo = photographer.portfolio[photoIndex];
 	photo.title = newTitle;
 	photo.category = newCategory;
+	await photographer.save();
 
 	// Сохраняем обновления в базе данных, если это требуется
 	// Например:
