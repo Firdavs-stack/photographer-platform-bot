@@ -109,7 +109,6 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 		state = null; // Обновляем переменную state после очистки
 		// Продолжаем выполнение для обработки команды по умолчанию
 	}
-
 	// Обработка различных состояний фотографа
 	if (state) {
 		switch (state.state) {
