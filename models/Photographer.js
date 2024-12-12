@@ -30,7 +30,6 @@ const photographerSchema = new mongoose.Schema({
 			availableSlots: [String],
 		},
 	],
-	hasPastDates: Boolean,
 	paymentDetails: { type: String }, // Новое поле для реквизитов
 });
 
