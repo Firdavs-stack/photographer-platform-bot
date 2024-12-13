@@ -460,14 +460,11 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 		'Введите дату в формате YYYY-MM-DD или напишите "сегодня":',
 		{
 			reply_markup: {
-				inline_keyboard: [
-					[
-						{
-							text: "Вставить 'сегодня'",
-							switch_inline_query: "сегодня",
-						},
-					],
+				keyboard: [
+					[{ text: "Сегодня" }], // Кнопка, отправляющая текст "Сегодня"
 				],
+				resize_keyboard: true, // Уменьшение размера кнопки
+				one_time_keyboard: false, // Кнопка остаётся на экране
 			},
 		}
 	);
