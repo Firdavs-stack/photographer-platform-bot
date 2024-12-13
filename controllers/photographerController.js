@@ -408,6 +408,18 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 		});
 	} else {
 		dateText = text;
+		await bot.sendMessage(chatId, `Вы выбрали ${dateText}`, {
+			reply_markup: {
+				keyboard: [
+					[{ text: "📸 Добавить портфолио" }],
+					[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
+					[{ text: "🕒 Выбрать временные промежутки" }],
+					[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
+				],
+				resize_keyboard: true,
+				one_time_keyboard: false,
+			},
+		});
 	}
 
 	// Проверяем формат даты
