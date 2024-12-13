@@ -145,12 +145,6 @@ bot.on("message", async (msg) => {
 	}
 });
 
-bot.on("callback_query", async (query) => {
-	if (query.data === "today") {
-		bot.sendMessage(query.message.chat.id, "сегодня");
-	}
-});
-
 // Обработка фото от клиента
 bot.on("photo", async (msg) => {
 	const chatId = msg.chat.id;

@@ -461,7 +461,12 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 		{
 			reply_markup: {
 				inline_keyboard: [
-					[{ text: "Сегодня", callback_data: "today" }],
+					[
+						{
+							text: "Вставить 'сегодня'",
+							switch_inline_query: "сегодня",
+						},
+					],
 				],
 			},
 		}
