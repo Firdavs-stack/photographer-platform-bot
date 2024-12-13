@@ -457,7 +457,14 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 
 	bot.sendMessage(
 		chatId,
-		'Введите дату в формате YYYY-MM-DD или напишите "сегодня":'
+		'Введите дату в формате YYYY-MM-DD или напишите "сегодня":',
+		{
+			reply_markup: {
+				inline_keyboard: [
+					[{ text: "Сегодня", callback_data: "today" }],
+				],
+			},
+		}
 	);
 }
 
