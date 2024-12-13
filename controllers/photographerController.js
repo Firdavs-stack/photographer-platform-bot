@@ -406,7 +406,6 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 				one_time_keyboard: false,
 			},
 		});
-		return; // Прерываем выполнение функции, чтобы не продолжать с выбором времени
 	} else {
 		dateText = text;
 	}
