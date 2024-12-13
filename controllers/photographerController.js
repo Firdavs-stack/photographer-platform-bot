@@ -387,10 +387,28 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 		return;
 	}
 
-	const dateText =
-		text.toLowerCase() === "сегодня"
-			? new Date().toISOString().slice(0, 10)
-			: text;
+	let dateText;
+
+	// Если введено "сегодня", используем текущую дату
+	if (text.toLowerCase() === "сегодня") {
+		dateText = new Date().toISOString().slice(0, 10);
+
+		// Вернем обычное меню после выбора "сегодня"
+		await bot.sendMessage(chatId, 'Вы выбрали "сегодня"', {
+			reply_markup: {
+				keyboard: [
+					["🔍 Поиск фотографов"],
+					["👤 Мой аккаунт", "📅 Мои бронирования"],
+					["⚙️ Настройки"],
+				],
+				one_time_keyboard: false,
+				resize_keyboard: true,
+			},
+		});
+		return; // Прерываем выполнение функции, чтобы не продолжать с выбором времени
+	} else {
+		dateText = text;
+	}
 
 	// Проверяем формат даты
 	if (!/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
@@ -411,6 +429,7 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 		  )
 		: [];
 	console.log("START");
+
 	// Генерируем клавиатуру с временными промежутками
 	const keyboard = await generateTimeSlotsKeyboard(
 		"",
@@ -461,7 +480,7 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 		{
 			reply_markup: {
 				keyboard: [
-					[{ text: "Сегодня" }], // Кнопка, отправляющая текст "Сегодня"
+					[{ text: "сегодня" }], // Кнопка, отправляющая текст "Сегодня"
 				],
 				resize_keyboard: true, // Уменьшение размера кнопки
 				one_time_keyboard: false, // Кнопка остаётся на экране
