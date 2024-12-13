@@ -72,7 +72,7 @@ router.put("/:id/uploadScreenshot", async (req, res) => {
 // Обновлённая функция для отправки сообщения с кнопкой
 async function sendTelegramMessageWithButton(chatId, message, bookingId) {
 	console.log("ID", bookingId);
-	const botToken = "7456265736:AAH8zdizZ8nvXo2N8kTHmOWIO9yn-1TYYU8"; // Ваш токен бота
+	const botToken = "7647751844:AAGSToi5DCbuRGAA156G52obCl3FLHBn5j4"; // Ваш токен бота
 	const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
 	const response = await fetch(url, {
@@ -104,7 +104,7 @@ async function sendTelegramMessageWithButton(chatId, message, bookingId) {
 }
 
 async function sendTelegramMessage(chatId, message) {
-	const botToken = "7456265736:AAH8zdizZ8nvXo2N8kTHmOWIO9yn-1TYYU8";
+	const botToken = "7647751844:AAGSToi5DCbuRGAA156G52obCl3FLHBn5j4";
 	const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
 	const response = await fetch(url, {

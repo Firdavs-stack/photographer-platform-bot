@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // URL для отправки сообщений в Telegram
-const botToken = "7456265736:AAH8zdizZ8nvXo2N8kTHmOWIO9yn-1TYYU8"; // Укажите ваш токен бота
+const botToken = "7647751844:AAGSToi5DCbuRGAA156G52obCl3FLHBn5j4"; // Укажите ваш токен бота
 const apiUrl = `https://api.telegram.org/bot${botToken}`;
 
 // Функция для отправки интерфейса фотографа

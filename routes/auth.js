@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
 
-const BOT_TOKEN = "7456265736:AAH8zdizZ8nvXo2N8kTHmOWIO9yn-1TYYU8";
+const BOT_TOKEN = "7647751844:AAGSToi5DCbuRGAA156G52obCl3FLHBn5j4";
 
 router.post("/telegram-auth", (req, res) => {
 	const { hash, ...data } = req.body;
