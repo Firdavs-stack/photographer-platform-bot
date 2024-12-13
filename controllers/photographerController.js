@@ -397,12 +397,13 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 		await bot.sendMessage(chatId, 'Вы выбрали "сегодня"', {
 			reply_markup: {
 				keyboard: [
-					["🔍 Поиск фотографов"],
-					["👤 Мой аккаунт", "📅 Мои бронирования"],
-					["⚙️ Настройки"],
+					[{ text: "📸 Добавить портфолио" }],
+					[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
+					[{ text: "🕒 Выбрать временные промежутки" }],
+					[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
 				],
-				one_time_keyboard: false,
 				resize_keyboard: true,
+				one_time_keyboard: false,
 			},
 		});
 		return; // Прерываем выполнение функции, чтобы не продолжать с выбором времени
