@@ -9,7 +9,7 @@ const Photographer = require("./models/Photographer");
 const Booking = require("./models/booking");
 
 // Инициализация бота
-const bot = new TelegramBot("7456265736:AAFQDmk4S3uqrOmieU0dcX5VRrHemHE6DG8", {
+const bot = new TelegramBot("7647751844:AAGSToi5DCbuRGAA156G52obCl3FLHBn5j4", {
 	polling: true,
 });
 
