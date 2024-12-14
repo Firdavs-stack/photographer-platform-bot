@@ -65,7 +65,6 @@ bot.on("message", async (msg) => {
 			clientController.handleClientMessage(bot, msg, client);
 		}
 	} else if (photographer) {
-		console.log("AM PHOTO");
 		photographerController.handlePhotographerMessage(
 			bot,
 			msg,

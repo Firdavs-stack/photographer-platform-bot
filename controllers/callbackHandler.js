@@ -81,7 +81,6 @@ async function handleCallbackQuery(bot, query) {
 	if (client) {
 		await handleClientCallback(bot, chatId, query, data, client);
 	} else if (photographer) {
-		console.log(photographer, "HOHO");
 		await handlePhotographerCallback(
 			bot,
 			chatId,
@@ -201,7 +200,6 @@ async function handlePhotographerCallback(
 	photographer,
 	state
 ) {
-	console.log(photographer, "SEVARA");
 	if (isDefaultCommand(data, photographerDefaultCommands)) {
 		return; // Прерываем выполнение, если нажата одна из стандартных кнопок
 	}
@@ -563,7 +561,6 @@ async function toggleTime(bot, chatId, query, data, photographer, state) {
 
 	const hour = parseInt(data.split(";")[1]);
 	const isReschedule = data.split(";")[2];
-	console.log(isReschedule, "SISKA");
 	const timeSlot = `${hour.toString().padStart(2, "0")}:00-${(hour + 1)
 		.toString()
 		.padStart(2, "0")}:00`;
@@ -663,8 +660,6 @@ async function rescheduleTimeSelectionDone(
 			photographerId: photographer._id,
 			date: date, // Преобразуем дату в правильный формат// Учитываем только подтвержденные бронирования
 		});
-
-		console.log(existingBooking, "SHLUXA");
 
 		if (existingBooking) {
 			// Обновляем временной интервал бронирования

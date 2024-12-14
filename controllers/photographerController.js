@@ -440,7 +440,6 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 				parseInt(slot.split(":")[0])
 		  )
 		: [];
-	console.log("START");
 
 	// Генерируем клавиатуру с временными промежутками
 	const keyboard = await generateTimeSlotsKeyboard(
@@ -524,8 +523,6 @@ async function chooseNamingPortfolioPhotos(bot, chatId, text, state) {
 		telegramId: chatId.toString(),
 	});
 
-	console.log("PISKA", tempPhotos, photographer);
-
 	if (text !== "/done") {
 		// Разделяем текст на пары "Название; Категория" по разделителю "|"
 		const entries = text.split("|").map((entry) => entry.trim());
@@ -586,7 +583,6 @@ async function savePhotosToPortfolio(bot, photographer, tempPhotos, chatId) {
 				sourceDir,
 				"two2one.uz/images/portfolio"
 			)}${Date.now()}_${photo.file_id}.png`;
-			console.log("SIIIU", file);
 			const writer = fs.createWriteStream(filename);
 			axiosResponse.data.pipe(writer);
 
@@ -669,16 +665,13 @@ async function generateTimeSlotsKeyboard(
 	availableDates = [],
 	chatId = ""
 ) {
-	console.log(type, "END");
 	const timeSlots = [];
 	const isReschedule = type == "reschedule" ? 1 : 0;
 	if (isReschedule == 1) {
 		stateController.updateState(chatId, { availableSlots: availableDates });
-		console.log(availableDates, "GANDON");
 		availableDates.forEach((timeSlot) => {
 			const slotText = String(timeSlot);
 			const hour = parseInt(slotText.split("-")[0].split(":")[0]);
-			console.log(selectedHours, "siu");
 			const isSelected = selectedHours.includes(hour);
 			timeSlots.push({
 				text: isSelected ? `✅ ${timeSlot}` : timeSlot,
@@ -686,7 +679,6 @@ async function generateTimeSlotsKeyboard(
 			});
 		});
 	} else {
-		console.log("ВСЕ ЧЕТКО");
 		// Генерируем слоты времени с кнопками
 		for (let hour = 0; hour < 24; hour++) {
 			const timeSlot = `${hour.toString().padStart(2, "0")}:00-${(
@@ -694,7 +686,6 @@ async function generateTimeSlotsKeyboard(
 			)
 				.toString()
 				.padStart(2, "0")}:00`;
-			console.log(selectedHours, "siu");
 			const isSelected = selectedHours.includes(hour);
 			timeSlots.push({
 				text: isSelected ? `✅ ${timeSlot}` : timeSlot,
