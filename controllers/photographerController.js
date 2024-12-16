@@ -444,7 +444,6 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 
 			const buttons = [];
 			const currentDate = new Date();
-			const bookingDate = new Date(booking.date);
 
 			if (
 				[
@@ -483,8 +482,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 					},
 				]);
 			}
-			bot.sendMessage(chatId, `${booking.date},${currentDate}`);
-			if (bookingDate < currentDate) {
+			if (booking.date < currentDate) {
 				buttons.push([
 					{
 						text: "Подтвердить",
