@@ -341,10 +341,6 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 			state: "processBookingsByDate",
 			date: requestedDate,
 		});
-		bot.sendMessage(
-			chatId,
-			"Дата сохранена. Выполните следующую команду для просмотра бронирований."
-		);
 	});
 }
 
