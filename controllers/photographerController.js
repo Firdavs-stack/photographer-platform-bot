@@ -332,6 +332,8 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 `;
 
 			const buttons = [];
+			const currentDate = new Date();
+			const bookingDate = new Date(booking.date);
 
 			if (
 				[
@@ -367,6 +369,19 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 					{
 						text: "Отклонить",
 						callback_data: `decline_reschedule;${booking._id}`,
+					},
+				]);
+			}
+
+			if (bookingDate < currentDate) {
+				buttons.push([
+					{
+						text: "Подтвердить",
+						callback_data: `confirm_booking;${booking._id}`,
+					},
+					{
+						text: "Отменить",
+						callback_data: `cancel_booking;${booking._id}`,
 					},
 				]);
 			}
