@@ -338,7 +338,7 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 		}
 
 		await stateController.setState(chatId, {
-			action: "processBookingsByDate",
+			state: "processBookingsByDate",
 			date: requestedDate,
 		});
 		bot.sendMessage(
