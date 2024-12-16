@@ -255,7 +255,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				await checkTheBookingDate(bot, text, chatId, photographer);
 				break;
 			case "processBookingsByDate":
-				await processBookingsByDate(bot, chatId, photographer);
+				await processBookingsByDate(bot, chatId, text, photographer);
 				break;
 
 			default:
