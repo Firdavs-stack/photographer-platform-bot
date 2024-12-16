@@ -429,7 +429,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 	const requestedDate = text;
 	const bookings = await Booking.find({
 		photographerId: photographer._id,
-		date: new Date(requestedDate),
+		date: requestedDate,
 	});
 
 	if (bookings.length === 0) {
@@ -482,8 +482,16 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 					},
 				]);
 			}
-			bot.sendMessage(chatId, `${booking.date},${currentDate}`);
-			if (booking.date < currentDate) {
+			const bookingDate = new Date(booking.date); // Дата бронирования
+			const [startTime, endTime] = booking.timeSlot.split("-"); // Разделяем интервал времени
+
+			// Преобразуем startTime и endTime в полные объекты Date
+			const startDateTime = new Date(`${booking.date}T${startTime}:00`);
+			const endDateTime = new Date(`${booking.date}T${endTime}:00`);
+			if (
+				currentDateTime >= startDateTime &&
+				currentDateTime <= endDateTime
+			) {
 				buttons.push([
 					{
 						text: "Подтвердить",
