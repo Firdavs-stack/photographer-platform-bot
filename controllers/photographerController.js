@@ -429,7 +429,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 	const requestedDate = text;
 	const bookings = await Booking.find({
 		photographerId: photographer._id,
-		date: requestedDate,
+		date: new Date(requestedDate),
 	});
 
 	if (bookings.length === 0) {
