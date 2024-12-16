@@ -435,7 +435,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 	}
 	const state = await stateController.getState(chatId);
 
-	if (!state || state.action !== "processBookingsByDate" || !state.date) {
+	if (!state || state.state !== "processBookingsByDate" || !state.date) {
 		return bot.sendMessage(
 			chatId,
 			"Сначала укажите дату с помощью соответствующей команды."
