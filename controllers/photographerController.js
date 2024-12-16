@@ -322,14 +322,14 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 }
 
 async function showPhotographerBookings(bot, chatId, photographer) {
-	await stateController.setState(chatId, {
-		state: "processBookingsByDate",
-		date: requestedDate,
-	});
 	bot.sendMessage(
 		chatId,
 		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
+	await stateController.setState(chatId, {
+		state: "processBookingsByDate",
+		date: requestedDate,
+	});
 }
 async function checkTheBookingDate(bot, text, chatId, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
