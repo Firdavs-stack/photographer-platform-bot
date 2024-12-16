@@ -429,7 +429,7 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 	);
 }
 
-async function processBookingsByDate(bot, chatId, photographer) {
+async function processBookingsByDate(bot, chatId, text, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
 		return;
 	}
