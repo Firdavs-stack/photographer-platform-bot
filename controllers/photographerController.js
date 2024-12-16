@@ -488,6 +488,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 			// Преобразуем startTime и endTime в полные объекты Date
 			const startDateTime = new Date(`${booking.date}T${startTime}:00`);
 			const endDateTime = new Date(`${booking.date}T${endTime}:00`);
+			bot.sendMessage(chatId, `${startDateTime},${endDateTime}`);
 			if (
 				currentDateTime >= startDateTime &&
 				currentDateTime <= endDateTime
