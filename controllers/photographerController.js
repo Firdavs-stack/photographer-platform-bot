@@ -168,7 +168,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 		// Продолжаем выполнение для обработки команды по умолчанию
 	}
 
-	console.log(text, state);
+	bot.sendMessage(chatId, `muchcha`);
 
 	// Обработка различных состояний фотографа
 	if (state) {
