@@ -327,7 +327,7 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
 	await stateController.setState(chatId, {
-		state: "processBookingsByDate",
+		state: "awaiting_bookings_date",
 		date: requestedDate,
 	});
 }
