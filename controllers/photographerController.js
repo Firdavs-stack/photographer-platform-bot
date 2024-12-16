@@ -254,6 +254,9 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 			case "awaiting_date":
 				await checkTheBookingDate(bot, text, chatId, photographer);
 				break;
+			case "processBookingsByDate":
+				await processBookingsByDate(bot, chatId, photographer);
+				break;
 
 			default:
 				bot.sendMessage(
@@ -334,85 +337,14 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 			);
 		}
 
-		const bookings = await Booking.find({
-			photographerId: photographer._id,
+		await stateController.setState(chatId, {
+			action: "processBookingsByDate",
 			date: requestedDate,
 		});
-
-		if (bookings.length === 0) {
-			bot.sendMessage(chatId, "На выбранную дату бронирований нет.");
-		} else {
-			for (const booking of bookings) {
-				let message = `Клиент: ${booking.clientName || "Неизвестно"}
-Дата: ${new Date(booking.date).toISOString().slice(0, 10)}
-Время: ${booking.timeSlot}
-Статус: ${booking.status}
-`;
-
-				const buttons = [];
-				const currentDate = new Date();
-				const bookingDate = new Date(booking.date);
-
-				if (
-					[
-						"approved",
-						"awaiting_prepayment",
-						"awaiting_confirmation",
-						"confirmed",
-					].includes(booking.status)
-				) {
-					buttons.push([
-						{
-							text: "Перебронировать",
-							callback_data: `photographer_reschedule;${booking._id}`,
-						},
-					]);
-				}
-
-				if (
-					booking.reschedule &&
-					booking.reschedule.requestedBy === "client" &&
-					booking.reschedule.status === "pending"
-				) {
-					message += `Запрос на перебронирование от клиента:
-Новая дата: ${new Date(booking.reschedule.newDate).toISOString().slice(0, 10)}
-Новое время: ${booking.reschedule.newTimeSlot}
-`;
-
-					buttons.push([
-						{
-							text: "Принять",
-							callback_data: `accept_reschedule;${booking._id}`,
-						},
-						{
-							text: "Отклонить",
-							callback_data: `decline_reschedule;${booking._id}`,
-						},
-					]);
-				}
-
-				if (bookingDate < currentDate) {
-					buttons.push([
-						{
-							text: "Подтвердить",
-							callback_data: `confirm_booking;${booking._id}`,
-						},
-						{
-							text: "Отменить",
-							callback_data: `cancel_booking;${booking._id}`,
-						},
-					]);
-				}
-
-				if (buttons.length > 0) {
-					bot.sendMessage(chatId, message, {
-						reply_markup: { inline_keyboard: buttons },
-					});
-				} else {
-					bot.sendMessage(chatId, message);
-				}
-			}
-		}
+		bot.sendMessage(
+			chatId,
+			"Дата сохранена. Выполните следующую команду для просмотра бронирований."
+		);
 	});
 }
 
@@ -499,6 +431,98 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 			reply_markup: { inline_keyboard: keyboard },
 		}
 	);
+}
+
+async function processBookingsByDate(bot, chatId, photographer) {
+	const state = await getState(chatId);
+
+	if (!state || state.action !== "processBookingsByDate" || !state.date) {
+		return bot.sendMessage(
+			chatId,
+			"Сначала укажите дату с помощью соответствующей команды."
+		);
+	}
+
+	const requestedDate = state.date;
+	const bookings = await Booking.find({
+		photographerId: photographer._id,
+		date: requestedDate,
+	});
+
+	if (bookings.length === 0) {
+		bot.sendMessage(chatId, "На выбранную дату бронирований нет.");
+	} else {
+		for (const booking of bookings) {
+			let message = `Клиент: ${booking.clientName || "Неизвестно"}
+Дата: ${new Date(booking.date).toISOString().slice(0, 10)}
+Время: ${booking.timeSlot}
+Статус: ${booking.status}
+`;
+
+			const buttons = [];
+			const currentDate = new Date();
+			const bookingDate = new Date(booking.date);
+
+			if (
+				[
+					"approved",
+					"awaiting_prepayment",
+					"awaiting_confirmation",
+					"confirmed",
+				].includes(booking.status)
+			) {
+				buttons.push([
+					{
+						text: "Перебронировать",
+						callback_data: `photographer_reschedule;${booking._id}`,
+					},
+				]);
+			}
+
+			if (
+				booking.reschedule &&
+				booking.reschedule.requestedBy === "client" &&
+				booking.reschedule.status === "pending"
+			) {
+				message += `Запрос на перебронирование от клиента:
+Новая дата: ${new Date(booking.reschedule.newDate).toISOString().slice(0, 10)}
+Новое время: ${booking.reschedule.newTimeSlot}
+`;
+
+				buttons.push([
+					{
+						text: "Принять",
+						callback_data: `accept_reschedule;${booking._id}`,
+					},
+					{
+						text: "Отклонить",
+						callback_data: `decline_reschedule;${booking._id}`,
+					},
+				]);
+			}
+
+			if (bookingDate < currentDate) {
+				buttons.push([
+					{
+						text: "Подтвердить",
+						callback_data: `confirm_booking;${booking._id}`,
+					},
+					{
+						text: "Отменить",
+						callback_data: `cancel_booking;${booking._id}`,
+					},
+				]);
+			}
+
+			if (buttons.length > 0) {
+				bot.sendMessage(chatId, message, {
+					reply_markup: { inline_keyboard: buttons },
+				});
+			} else {
+				bot.sendMessage(chatId, message);
+			}
+		}
+	}
 }
 
 async function choosePhotographerTimeSlots(bot, chatId) {
