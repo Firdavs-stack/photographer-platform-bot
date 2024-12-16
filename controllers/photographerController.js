@@ -433,7 +433,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
 		return;
 	}
-	const state = await getState(chatId);
+	const state = await stateController.getState(chatId);
 
 	if (!state || state.action !== "processBookingsByDate" || !state.date) {
 		return bot.sendMessage(
