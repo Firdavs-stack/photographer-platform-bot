@@ -168,8 +168,6 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 		// Продолжаем выполнение для обработки команды по умолчанию
 	}
 
-	bot.sendMessage(chatId, state.state);
-
 	// Обработка различных состояний фотографа
 	if (state) {
 		switch (state.state) {
@@ -323,14 +321,14 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 }
 
 async function showPhotographerBookings(bot, chatId, photographer) {
-	bot.sendMessage(
-		chatId,
-		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
-	);
 	await stateController.setState(chatId, {
 		state: "awaiting_bookings_date",
 		date: requestedDate,
 	});
+	bot.sendMessage(
+		chatId,
+		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
+	);
 }
 async function checkTheBookingDate(bot, text, chatId, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
