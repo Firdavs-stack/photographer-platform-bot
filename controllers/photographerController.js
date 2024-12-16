@@ -321,22 +321,16 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 	}
 }
 
-async function showPhotographerBookings(bot, chatId) {
+async function showPhotographerBookings(bot, chatId, photographer) {
 	await stateController.setState(chatId, {
-		state: "awaiting_bookings_date",
-		date: null,
+		state: "processBookingsByDate",
+		date: requestedDate,
 	});
 	bot.sendMessage(
 		chatId,
-		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):",
-		{
-			reply_markup: {
-				remove_keyboard: true, // Убирает клавиатуру, если она есть
-			},
-		}
+		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
 }
-
 async function checkTheBookingDate(bot, text, chatId, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
 		return;
@@ -427,13 +421,6 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 		return;
 	}
 	const state = await stateController.getState(chatId);
-
-	if (!state || state.state !== "processBookingsByDate" || !state.date) {
-		return bot.sendMessage(
-			chatId,
-			"Сначала укажите дату с помощью соответствующей команды."
-		);
-	}
 
 	if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
 		await bot.sendMessage(
