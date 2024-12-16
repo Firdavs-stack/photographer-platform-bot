@@ -320,10 +320,10 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 }
 
 async function showPhotographerBookings(bot, chatId, photographer) {
-	stateController.setState(chatId, {
+	await stateController.setState(chatId, {
 		state: "awaiting_bookings_date",
 	});
-	await bot.sendMessage(
+	bot.sendMessage(
 		chatId,
 		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
