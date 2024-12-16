@@ -482,6 +482,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 					},
 				]);
 			}
+			bot.sendMessage(chatId, `${booking.date},${currentDate}`);
 			if (booking.date < currentDate) {
 				buttons.push([
 					{
