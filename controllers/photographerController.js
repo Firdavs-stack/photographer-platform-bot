@@ -321,14 +321,19 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 	}
 }
 
-async function showPhotographerBookings(bot, chatId, photographer) {
+async function showPhotographerBookings(bot, chatId) {
 	await stateController.setState(chatId, {
-		state: "processBookingsByDate",
-		date: requestedDate,
+		state: "awaiting_bookings_date",
+		date: null,
 	});
 	bot.sendMessage(
 		chatId,
-		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
+		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):",
+		{
+			reply_markup: {
+				remove_keyboard: true, // Убирает клавиатуру, если она есть
+			},
+		}
 	);
 }
 
