@@ -319,82 +319,101 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 }
 
 async function showPhotographerBookings(bot, chatId, photographer) {
-	const bookings = await Booking.find({ photographerId: photographer._id });
+	bot.sendMessage(
+		chatId,
+		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
+	);
 
-	if (bookings.length === 0) {
-		bot.sendMessage(chatId, "У вас нет бронирований.");
-	} else {
-		for (const booking of bookings) {
-			let message = `Клиент: ${booking.clientName || "Неизвестно"}
+	bot.once("message", async (msg) => {
+		const requestedDate = msg.text;
+
+		if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate)) {
+			return bot.sendMessage(
+				chatId,
+				"Пожалуйста, введите дату в правильном формате: YYYY-MM-DD"
+			);
+		}
+
+		const bookings = await Booking.find({
+			photographerId: photographer._id,
+			date: requestedDate,
+		});
+
+		if (bookings.length === 0) {
+			bot.sendMessage(chatId, "На выбранную дату бронирований нет.");
+		} else {
+			for (const booking of bookings) {
+				let message = `Клиент: ${booking.clientName || "Неизвестно"}
 Дата: ${new Date(booking.date).toISOString().slice(0, 10)}
 Время: ${booking.timeSlot}
 Статус: ${booking.status}
 `;
 
-			const buttons = [];
-			const currentDate = new Date();
-			const bookingDate = new Date(booking.date);
+				const buttons = [];
+				const currentDate = new Date();
+				const bookingDate = new Date(booking.date);
 
-			if (
-				[
-					"approved",
-					"awaiting_prepayment",
-					"awaiting_confirmation",
-					"confirmed",
-				].includes(booking.status)
-			) {
-				buttons.push([
-					{
-						text: "Перебронировать",
-						callback_data: `photographer_reschedule;${booking._id}`,
-					},
-				]);
-			}
+				if (
+					[
+						"approved",
+						"awaiting_prepayment",
+						"awaiting_confirmation",
+						"confirmed",
+					].includes(booking.status)
+				) {
+					buttons.push([
+						{
+							text: "Перебронировать",
+							callback_data: `photographer_reschedule;${booking._id}`,
+						},
+					]);
+				}
 
-			if (
-				booking.reschedule &&
-				booking.reschedule.requestedBy === "client" &&
-				booking.reschedule.status === "pending"
-			) {
-				message += `Запрос на перебронирование от клиента:
+				if (
+					booking.reschedule &&
+					booking.reschedule.requestedBy === "client" &&
+					booking.reschedule.status === "pending"
+				) {
+					message += `Запрос на перебронирование от клиента:
 Новая дата: ${new Date(booking.reschedule.newDate).toISOString().slice(0, 10)}
 Новое время: ${booking.reschedule.newTimeSlot}
 `;
 
-				buttons.push([
-					{
-						text: "Принять",
-						callback_data: `accept_reschedule;${booking._id}`,
-					},
-					{
-						text: "Отклонить",
-						callback_data: `decline_reschedule;${booking._id}`,
-					},
-				]);
-			}
+					buttons.push([
+						{
+							text: "Принять",
+							callback_data: `accept_reschedule;${booking._id}`,
+						},
+						{
+							text: "Отклонить",
+							callback_data: `decline_reschedule;${booking._id}`,
+						},
+					]);
+				}
 
-			if (bookingDate < currentDate) {
-				buttons.push([
-					{
-						text: "Подтвердить",
-						callback_data: `confirm_booking;${booking._id}`,
-					},
-					{
-						text: "Отменить",
-						callback_data: `cancel_booking;${booking._id}`,
-					},
-				]);
-			}
+				if (bookingDate < currentDate) {
+					buttons.push([
+						{
+							text: "Подтвердить",
+							callback_data: `confirm_booking;${booking._id}`,
+						},
+						{
+							text: "Отменить",
+							callback_data: `cancel_booking;${booking._id}`,
+						},
+					]);
+				}
 
-			if (buttons.length > 0) {
-				bot.sendMessage(chatId, message, {
-					reply_markup: { inline_keyboard: buttons },
-				});
-			} else {
-				bot.sendMessage(chatId, message);
+				if (buttons.length > 0) {
+					bot.sendMessage(chatId, message, {
+						reply_markup: { inline_keyboard: buttons },
+					});
+				} else {
+					bot.sendMessage(chatId, message);
+				}
 			}
 		}
-	}
+	});
 }
 
 async function checkTheBookingDate(bot, text, chatId, photographer) {
