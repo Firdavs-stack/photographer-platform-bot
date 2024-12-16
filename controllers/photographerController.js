@@ -326,18 +326,6 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 		chatId,
 		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
-
-	bot.once("message", async (msg) => {
-		const requestedDate = msg.text;
-
-		if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate)) {
-			return bot.sendMessage(
-				chatId,
-				"Пожалуйста, введите дату в правильном формате: YYYY-MM-DD"
-			);
-		}
-	});
-
 	await stateController.setState(chatId, {
 		state: "processBookingsByDate",
 		date: requestedDate,
@@ -442,6 +430,13 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 		);
 	}
 
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+		await bot.sendMessage(
+			chatId,
+			'Пожалуйста, введите дату в формате YYYY-MM-DD или напишите "сегодня".'
+		);
+		return;
+	}
 	const requestedDate = state.date;
 	const bookings = await Booking.find({
 		photographerId: photographer._id,
