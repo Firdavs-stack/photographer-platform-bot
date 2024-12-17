@@ -654,6 +654,7 @@ async function rescheduleTimeSelectionDone(
 		.toString()
 		.padStart(2, "0")}:00`;
 
+	bot.sendMessage(chatId, date, photographer._id);
 	try {
 		// Ищем существующее бронирование для этого фотографа и даты
 		const existingBooking = await Booking.findOne({
