@@ -432,7 +432,6 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 
 	await stateController.setState(chatId, { ...state, date: requestedDate });
 
-	bot.sendMessage(chatId, `${stateController.getState(chatId).date}`);
 	const bookings = await Booking.find({
 		photographerId: photographer._id,
 		date: requestedDate,
@@ -494,7 +493,6 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 			// Преобразуем startTime и endTime в полные объекты Date
 			// const startDateTime = new Date(`${booking.date}T${startTime}:00`);
 			const endDateTime = new Date(`${booking.date}T${endTime}:00`);
-			bot.sendMessage(chatId, `${endDateTime}`);
 			if (currentDate >= endDateTime) {
 				buttons.push([
 					{

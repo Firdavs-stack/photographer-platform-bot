@@ -643,7 +643,7 @@ async function rescheduleTimeSelectionDone(
 		return;
 	}
 
-	const date = state.date;
+	const date = stateController.getState(chatId).date;
 	const selectedHours = state.selectedHours.sort((a, b) => a - b);
 
 	// Создаем диапазон времени для нового бронирования
