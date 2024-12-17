@@ -432,7 +432,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 
 	await stateController.setState(chatId, { ...state, date: requestedDate });
 
-	bot.sendMessage(chatId, `${state}`);
+	bot.sendMessage(chatId, `${stateController.getState(chatId).date}`);
 	const bookings = await Booking.find({
 		photographerId: photographer._id,
 		date: requestedDate,
