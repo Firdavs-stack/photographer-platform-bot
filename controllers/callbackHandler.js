@@ -643,7 +643,8 @@ async function rescheduleTimeSelectionDone(
 		return;
 	}
 
-	const date = stateController.getState(chatId).originalDate;
+	const originalDate = stateController.getState(chatId).originalDate;
+	const date = stateController.getState(chatId).date;
 	const selectedHours = state.selectedHours.sort((a, b) => a - b);
 
 	// Создаем диапазон времени для нового бронирования
@@ -653,13 +654,13 @@ async function rescheduleTimeSelectionDone(
 		.toString()
 		.padStart(2, "0")}:00`;
 
-	bot.sendMessage(chatId, `${date}`);
+	bot.sendMessage(chatId, `${originalDate}`);
 
 	try {
 		// Ищем существующее бронирование для этого фотографа и даты
 		const existingBooking = await Booking.findOne({
 			photographerId: photographer._id,
-			date: date, // Преобразуем дату в правильный формат// Учитываем только подтвержденные бронирования
+			date: originalDate, // Преобразуем дату в правильный формат// Учитываем только подтвержденные бронирования
 		});
 
 		if (existingBooking) {
