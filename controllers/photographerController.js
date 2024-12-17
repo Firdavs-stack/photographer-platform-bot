@@ -417,9 +417,6 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
 		return;
 	}
-	const state = await stateController.getState(chatId);
-
-	stateController.setState(chatId, { ...state, date: text });
 
 	if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
 		await bot.sendMessage(
@@ -428,7 +425,14 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 		);
 		return;
 	}
+
 	const requestedDate = text;
+
+	const state = await stateController.getState(chatId);
+
+	stateController.setState(chatId, { ...state, date: requestedDate });
+
+	bot.sendMessage(chatId, `${state.date}`);
 	const bookings = await Booking.find({
 		photographerId: photographer._id,
 		date: requestedDate,
