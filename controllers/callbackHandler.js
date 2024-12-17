@@ -5,7 +5,6 @@ const Booking = require("../models/booking");
 const Photographer = require("../models/Photographer");
 const { ObjectId } = require("mongodb");
 const Client = require("../models/client");
-const booking = require("../models/booking");
 
 // Определяем команды по умолчанию для фотографов и клиентов
 const photographerDefaultCommands = [
@@ -654,13 +653,14 @@ async function rescheduleTimeSelectionDone(
 		.toString()
 		.padStart(2, "0")}:00`;
 
-	bot.sendMessage(chatId, `${photographer._id}`);
 	try {
 		// Ищем существующее бронирование для этого фотографа и даты
 		const existingBooking = await Booking.findOne({
 			photographerId: photographer._id,
 			date: date, // Преобразуем дату в правильный формат// Учитываем только подтвержденные бронирования
 		});
+
+		bot.sendMessage(chatId, `${existingBooking}`);
 
 		if (existingBooking) {
 			// Обновляем временной интервал бронирования
