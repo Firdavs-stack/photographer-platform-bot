@@ -666,6 +666,7 @@ async function rescheduleTimeSelectionDone(
 			// Обновляем временной интервал бронирования
 			existingBooking.timeSlot = newTimeRange;
 			if (existingBooking.date != date) {
+				bot.sendMessage(chatId, "YAAS");
 				existingBooking.date = date;
 			}
 			await existingBooking.save();
