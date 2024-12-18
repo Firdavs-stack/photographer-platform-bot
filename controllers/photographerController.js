@@ -456,24 +456,26 @@ async function processSearchClient(bot, chatId, text, photographer) {
 		bot.sendMessage(chatId, "Клиент не найден.");
 	} else {
 		let clientListMessage = "Найденные клиенты:\n\n";
+		const buttons = [];
+
 		clients.forEach((client) => {
 			clientListMessage += `Имя: ${client.name}\nТелефон: ${client.phone}\n\n`;
+
+			// Добавляем кнопку для перевода в VIP статус
+			buttons.push([
+				{
+					text: `Перевести в VIP: ${client.name}`,
+					callback_data: `vip_client_${client._id}`, // В callback_data передаем ID клиента
+				},
+			]);
 		});
-		bot.sendMessage(chatId, clientListMessage);
+
+		bot.sendMessage(chatId, clientListMessage, {
+			reply_markup: {
+				inline_keyboard: buttons, // Добавляем кнопки для каждого клиента
+			},
+		});
 	}
-	// Возвращаем пользователя к основному меню или функционалу
-	bot.sendMessage(chatId, "Выберите следующее действие:", {
-		reply_markup: {
-			keyboard: [
-				[{ text: "📸 Добавить портфолио" }],
-				[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
-				[{ text: "🕒 Выбрать временные промежутки" }],
-				[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
-				[{ text: "🔍 Поиск клиентов" }],
-			],
-			resize_keyboard: true,
-		},
-	});
 }
 
 async function processBookingsByDate(bot, chatId, text, photographer) {
