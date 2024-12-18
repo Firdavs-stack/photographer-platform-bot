@@ -5,6 +5,7 @@ const Booking = require("../models/booking");
 const Photographer = require("../models/Photographer");
 const { ObjectId } = require("mongodb");
 const Client = require("../models/client");
+const { default: axios } = require("axios");
 
 // Определяем команды по умолчанию для фотографов и клиентов
 const photographerDefaultCommands = [
