@@ -465,7 +465,7 @@ async function processSearchClient(bot, chatId, text, photographer) {
 			buttons.push([
 				{
 					text: `Перевести в VIP: ${client.name}`,
-					callback_data: `vip_client_${client._id}_${photographer._id};`, // В callback_data передаем ID клиента
+					callback_data: `vip_client_${client._id}_${photographer._id}`, // В callback_data передаем ID клиента
 				},
 			]);
 		});
