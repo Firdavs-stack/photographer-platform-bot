@@ -244,6 +244,51 @@ async function handlePhotographerCallback(
 		case data.startsWith("edit_photo_"):
 			await editPhotoInfo(bot, query, photographer);
 			break;
+
+		case data.startsWith("vip_client_"):
+			// Извлекаем clientId из callback_data
+			const clientId = data.split("_")[2];
+
+			try {
+				// Отправляем запрос к API для обновления статуса клиента на VIP
+				const response = await axios.post(
+					"https://api.two2one.uz/api/clients/vip", // Замените на реальный endpoint вашего API
+					{ clientId } // Передаем ID клиента
+				);
+
+				if (response.data.success) {
+					bot.sendMessage(
+						chatId,
+						`Клиент ${response.data.client.name} теперь VIP!`
+					);
+				} else {
+					bot.sendMessage(
+						chatId,
+						"Не удалось обновить статус клиента."
+					);
+				}
+			} catch (error) {
+				console.error(error);
+				bot.sendMessage(
+					chatId,
+					"Произошла ошибка при обновлении статуса клиента."
+				);
+			}
+
+			// Возвращаем пользователя в основное меню
+			bot.sendMessage(chatId, "Выберите следующее действие:", {
+				reply_markup: {
+					keyboard: [
+						[{ text: "📸 Добавить портфолио" }],
+						[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
+						[{ text: "🕒 Выбрать временные промежутки" }],
+						[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
+						[{ text: "🔍 Поиск клиентов" }],
+					],
+					resize_keyboard: true,
+				},
+			});
+			break;
 		// Функции, вызываемые через photographerController, оставляем без изменений
 		case data === "portfolio_add_photos":
 			await photographerController.startPortfolioPhotoUpload(
