@@ -314,8 +314,6 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 			break;
 
 		case "🔍 Поиск клиентов":
-			console.log(text);
-			// Запросим пользователя ввести имя или номер телефона
 			await searchClients(bot, chatId, photographer);
 			break;
 
