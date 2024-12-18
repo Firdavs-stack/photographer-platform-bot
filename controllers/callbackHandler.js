@@ -250,7 +250,6 @@ async function handlePhotographerCallback(
 			// Извлекаем clientId из callback_data
 			const clientId = data.split("_")[2];
 			const photographerId = data.split("_")[3];
-			bot.sendMessage(chatId, `${clientId}, ${photographerId}`);
 			try {
 				// Отправляем запрос к API для обновления статуса клиента на VIP
 				const response = await axios.post(
