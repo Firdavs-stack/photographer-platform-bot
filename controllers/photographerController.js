@@ -17,6 +17,7 @@ const photographerDefaultCommands = [
 	"🕒 Выбрать временные промежутки",
 	"💳 Реквизиты",
 	"🎟 Ссылка",
+	"🔍 Поиск клиентов",
 ];
 
 // Функция для проверки, является ли команда командой по умолчанию
@@ -255,7 +256,9 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 			case "awaiting_bookings_date":
 				await processBookingsByDate(bot, chatId, text, photographer);
 				break;
-
+			case "searching_client":
+				await processSearchClient(bot, chatId, text, photographer);
+				break;
 			default:
 				bot.sendMessage(
 					chatId,
@@ -310,6 +313,12 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 			await choosePhotographerTimeSlots(bot, chatId);
 			break;
 
+		case "🔍 Поиск клиентов":
+			console.log(text);
+			// Запросим пользователя ввести имя или номер телефона
+			await searchClients(bot, chatId, photographer);
+			break;
+
 		default:
 			bot.sendMessage(
 				chatId,
@@ -317,6 +326,17 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 			);
 			break;
 	}
+}
+
+async function searchClients(bot, chatId, photographer) {
+	// Устанавливаем состояние, чтобы знать, что нужно ожидать от пользователя
+	await stateController.setState(chatId, {
+		state: "searching_client",
+	});
+	bot.sendMessage(
+		chatId,
+		"Введите имя или номер телефона клиента для поиска:"
+	);
 }
 
 async function showPhotographerBookings(bot, chatId, photographer) {
@@ -347,6 +367,7 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 					[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
 					[{ text: "🕒 Выбрать временные промежутки" }],
 					[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
+					[{ text: "🔍 Поиск клиентов" }], // Добавлена кнопка для поиска клиентов
 				],
 				resize_keyboard: true,
 				one_time_keyboard: false,
@@ -361,6 +382,7 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 					[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
 					[{ text: "🕒 Выбрать временные промежутки" }],
 					[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
+					[{ text: "🔍 Поиск клиентов" }], // Добавлена кнопка для поиска клиентов
 				],
 				resize_keyboard: true,
 				one_time_keyboard: false,
@@ -411,6 +433,49 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 			reply_markup: { inline_keyboard: keyboard },
 		}
 	);
+}
+
+async function processSearchClient(bot, chatId, text, photographer) {
+	// Проверяем, что клиент ввел имя или номер телефона
+	const clientInfo = text.trim();
+	if (clientInfo === "") {
+		bot.sendMessage(
+			chatId,
+			"Пожалуйста, введите имя или номер телефона клиента."
+		);
+		return;
+	}
+
+	// Реализуем поиск клиента в базе данных
+	const clients = await Client.find({
+		$or: [
+			{ name: { $regex: clientInfo, $options: "i" } }, // Поиск по имени
+			{ phone: { $regex: clientInfo, $options: "i" } }, // Поиск по телефону
+		],
+	});
+
+	if (clients.length === 0) {
+		bot.sendMessage(chatId, "Клиент не найден.");
+	} else {
+		let clientListMessage = "Найденные клиенты:\n\n";
+		clients.forEach((client) => {
+			clientListMessage += `Имя: ${client.name}\nТелефон: ${client.phone}\n\n`;
+		});
+		bot.sendMessage(chatId, clientListMessage);
+	}
+	// Возвращаем пользователя к основному меню или функционалу
+	bot.sendMessage(chatId, "Выберите следующее действие:", {
+		reply_markup: {
+			keyboard: [
+				[{ text: "📸 Добавить портфолио" }],
+				[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
+				[{ text: "🕒 Выбрать временные промежутки" }],
+				[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
+				[{ text: "🔍 Поиск клиентов" }],
+			],
+			resize_keyboard: true,
+		},
+	});
 }
 
 async function processBookingsByDate(bot, chatId, text, photographer) {
