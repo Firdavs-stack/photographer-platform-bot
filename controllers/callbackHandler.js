@@ -270,7 +270,7 @@ async function handlePhotographerCallback(
 					);
 				}
 			} catch (error) {
-				bot.sendMessage(chatId, error);
+				bot.sendMessage(chatId, `${error}`);
 			}
 
 			// Возвращаем пользователя в основное меню
