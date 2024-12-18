@@ -654,8 +654,6 @@ async function rescheduleTimeSelectionDone(
 		.toString()
 		.padStart(2, "0")}:00`;
 
-	bot.sendMessage(chatId, `${originalDate}`);
-
 	try {
 		// Ищем существующее бронирование для этого фотографа и даты
 		const existingBooking = await Booking.findOne({
@@ -667,7 +665,6 @@ async function rescheduleTimeSelectionDone(
 			// Обновляем временной интервал бронирования
 			existingBooking.timeSlot = newTimeRange;
 			if (existingBooking.date != date) {
-				bot.sendMessage(chatId, "YAAS");
 				existingBooking.date = date;
 			}
 			await existingBooking.save();
