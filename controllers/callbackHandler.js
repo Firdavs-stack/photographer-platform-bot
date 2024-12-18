@@ -253,8 +253,9 @@ async function handlePhotographerCallback(
 			try {
 				// Отправляем запрос к API для обновления статуса клиента на VIP
 				const response = await axios.post(
-					"https://api.two2one.uz/api/clients/vip", // Замените на реальный endpoint вашего API
-					{ clientId: clientId, photographerId: photographerId } // Передаем ID клиента
+					"https://api.two2one.uz/api/clients/vip",
+					{ clientId, photographerId },
+					{ headers: { "Content-Type": "application/json" } }
 				);
 
 				if (response.data.success) {
