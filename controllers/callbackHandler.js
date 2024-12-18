@@ -270,11 +270,7 @@ async function handlePhotographerCallback(
 					);
 				}
 			} catch (error) {
-				console.error(error);
-				bot.sendMessage(
-					chatId,
-					"Произошла ошибка при обновлении статуса клиента."
-				);
+				bot.sendMessage(chatId, error);
 			}
 
 			// Возвращаем пользователя в основное меню
