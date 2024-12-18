@@ -248,12 +248,13 @@ async function handlePhotographerCallback(
 		case data.startsWith("vip_client_"):
 			// Извлекаем clientId из callback_data
 			const clientId = data.split("_")[2];
+			const photographerId = data.split("_")[3];
 
 			try {
 				// Отправляем запрос к API для обновления статуса клиента на VIP
 				const response = await axios.post(
 					"https://api.two2one.uz/api/clients/vip", // Замените на реальный endpoint вашего API
-					{ clientId } // Передаем ID клиента
+					{ clientId, photographerId } // Передаем ID клиента
 				);
 
 				if (response.data.success) {
