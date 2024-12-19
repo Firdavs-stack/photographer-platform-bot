@@ -515,32 +515,57 @@ async function confirmBooking(bot, chatId, data, client) {
 
 	try {
 		const booking = await Booking.findById(bookingId);
-		const photographer = await Photographer.findById(
-			booking.photographerId
-		);
-		console.log(booking);
 		if (!booking) {
 			bot.sendMessage(chatId, "Бронирование не найдено.");
 			return;
 		}
 
-		// Изменяем статус бронирования на "awaiting_payment"
-		booking.status = "awaiting_prepayment";
-		await booking.save();
-
-		// Информируем клиента о реквизитах
-		bot.sendMessage(
-			chatId,
-			`Спасибо за подтверждение! Пожалуйста, внесите предоплату в размере 40% от общей суммы. Реквизиты для оплаты:\n\n${
-				photographer.paymentDetails
-					? photographer.paymentDetails
-					: "Реквизиты на оплату не найдены, сообщите админу"
-			}`
+		const photographer = await Photographer.findById(
+			booking.photographerId
 		);
+		if (!photographer) {
+			bot.sendMessage(chatId, "Фотограф не найден.");
+			return;
+		}
 
-		// Запрашиваем скриншот оплаты
-		const state = { state: "awaiting_payment", bookingInfo: booking };
-		stateController.setState(chatId, state);
+		// Проверяем VIP-статус клиента
+		const isVip = client.photographers.includes(booking.photographerId);
+
+		if (isVip) {
+			// Для VIP-клиента сразу меняем статус на "confirmed"
+			booking.status = "confirmed";
+			await booking.save();
+
+			// Информируем клиента, что бронирование подтверждено
+			bot.sendMessage(
+				chatId,
+				`Бронирование подтверждено! Ваша встреча с фотографом ${photographer.name} запланирована на ${booking.date} в ${booking.timeSlot}.`
+			);
+
+			// Отправляем запрос фотографу о подтверждении бронирования
+			bot.sendMessage(
+				photographer.chatId,
+				`Клиент ${client.name} подтвердил бронирование на ${booking.date} в ${booking.timeSlot}.`
+			);
+		} else {
+			// Для обычных клиентов изменяем статус на "awaiting_prepayment"
+			booking.status = "awaiting_prepayment";
+			await booking.save();
+
+			// Информируем клиента о реквизитах для предоплаты
+			bot.sendMessage(
+				chatId,
+				`Спасибо за подтверждение! Пожалуйста, внесите предоплату в размере 40% от общей суммы. Реквизиты для оплаты:\n\n${
+					photographer.paymentDetails
+						? photographer.paymentDetails
+						: "Реквизиты на оплату не найдены, сообщите админу"
+				}`
+			);
+
+			// Запрашиваем скриншот оплаты
+			const state = { state: "awaiting_payment", bookingInfo: booking };
+			stateController.setState(chatId, state);
+		}
 	} catch (error) {
 		console.error("Ошибка при подтверждении бронирования:", error);
 		bot.sendMessage(

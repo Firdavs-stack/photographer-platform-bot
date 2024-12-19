@@ -46,6 +46,8 @@ const BookingSchema = new mongoose.Schema({
 			required: false,
 		},
 	},
+	// Новое поле для проверки, является ли клиент VIP
+	isVip: { type: Boolean, default: false }, // Статус VIP клиента
 });
 
 module.exports = mongoose.model("Booking", BookingSchema);
