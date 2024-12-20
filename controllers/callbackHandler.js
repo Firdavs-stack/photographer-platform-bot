@@ -62,17 +62,17 @@ async function handleCallbackQuery(bot, query) {
 	if (data.startsWith("confirm_booking_photographer")) {
 		const bookingId = data.split("_")[1];
 
+		// Сохраняем состояние фотографа
+		await stateController.set(chatId, {
+			action: "awaiting_price",
+			bookingId,
+		});
+
 		// Спрашиваем сумму
 		await bot.sendMessage(
 			chatId,
 			`Введите сумму, которую вы договорились с клиентом:`
 		);
-
-		// Сохраняем состояние фотографа
-		stateController.set(chatId, {
-			action: "awaiting_price",
-			bookingId,
-		});
 	}
 
 	// Обработка завершения выбора временных промежутков
