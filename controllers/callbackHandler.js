@@ -63,7 +63,7 @@ async function handleCallbackQuery(bot, query) {
 		const bookingId = data.split("_")[1];
 
 		// Сохраняем состояние фотографа
-		await stateController.set(chatId, {
+		await stateController.setState(chatId, {
 			action: "awaiting_price",
 			bookingId,
 		});

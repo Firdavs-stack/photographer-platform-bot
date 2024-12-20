@@ -232,7 +232,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				}
 
 				// Очищаем состояние
-				stateController.clear(chatId);
+				stateController.clearState(chatId);
 				break;
 
 			case "decline_reschedule_photographer":
