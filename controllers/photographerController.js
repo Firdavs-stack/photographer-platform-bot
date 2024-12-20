@@ -554,7 +554,6 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 		bot.sendMessage(chatId, "На выбранную дату бронирований нет.");
 	} else {
 		for (const booking of bookings) {
-			bot.sendMessage(chatId, `${booking._id}`);
 			let message = `Клиент: ${booking.clientName || "Неизвестно"}
 Дата: ${new Date(booking.date).toISOString().slice(0, 10)}
 Время: ${booking.timeSlot}
