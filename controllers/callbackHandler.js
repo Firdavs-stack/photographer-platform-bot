@@ -514,6 +514,7 @@ async function rejectPayment(bot, query, photographer) {
 }
 
 async function confirmPhotographerBooking(bot, chatId, data, client) {
+	bot.sendMessage(chatId, "piska");
 	const bookingId = data.split(";")[1];
 
 	// Сохраняем состояние фотографа
