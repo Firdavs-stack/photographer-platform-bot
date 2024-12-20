@@ -59,22 +59,6 @@ async function handleCallbackQuery(bot, query) {
 		return;
 	}
 
-	if (data.startsWith("confirm_booking_photographer")) {
-		const bookingId = data.split("_")[1];
-
-		// Сохраняем состояние фотографа
-		await stateController.setState(chatId, {
-			action: "awaiting_price",
-			bookingId,
-		});
-
-		// Спрашиваем сумму
-		await bot.sendMessage(
-			chatId,
-			`Введите сумму, которую вы договорились с клиентом:`
-		);
-	}
-
 	// Обработка завершения выбора временных промежутков
 	if (data === "time_selection_done") {
 		if (!state) {
@@ -139,6 +123,8 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 		await handlePagination(bot, chatId, data);
 	} else if (data.startsWith("confirm_booking;")) {
 		await confirmBooking(bot, chatId, data, client);
+	} else if (data.startsWith("confirm_booking_photographer;")) {
+		await confirmPhotographerBooking(bot, chatId, data, client);
 	} else {
 		bot.sendMessage(
 			chatId,
@@ -146,7 +132,6 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 		);
 	}
 }
-
 // Принять запрос на перебронирование от фотографа
 async function acceptRescheduleClient(bot, chatId, data, client) {
 	if (isDefaultCommand(data, clientDefaultCommands)) {
@@ -523,6 +508,22 @@ async function rejectPayment(bot, query, photographer) {
 			"Произошла ошибка при подтверждении оплаты. Пожалуйста, попробуйте позже."
 		);
 	}
+}
+
+async function confirmPhotographerBooking(bot, chatId, data, client) {
+	const bookingId = data.split("_")[1];
+
+	// Сохраняем состояние фотографа
+	await stateController.setState(chatId, {
+		action: "awaiting_price",
+		bookingId,
+	});
+
+	// Спрашиваем сумму
+	await bot.sendMessage(
+		chatId,
+		`Введите сумму, которую вы договорились с клиентом:`
+	);
 }
 
 async function confirmBooking(bot, chatId, data, client) {
