@@ -539,6 +539,7 @@ async function confirmBooking(bot, chatId, data, client) {
 		const photographer = await Photographer.findById(
 			booking.photographerId
 		);
+		bot.sendMessage(chatId, `${booking}`);
 		if (!photographer) {
 			bot.sendMessage(chatId, "Фотограф не найден.");
 			return;
