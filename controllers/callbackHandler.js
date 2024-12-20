@@ -121,7 +121,7 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 		await showPhotographersByLevel(bot, chatId, data);
 	} else if (data.startsWith("page:")) {
 		await handlePagination(bot, chatId, data);
-	} else if (data.startsWith("confirm_booking;")) {
+	} else if (data.startsWith("confirm_booking_client;")) {
 		await confirmBooking(bot, chatId, data, client);
 	} else {
 		bot.sendMessage(
