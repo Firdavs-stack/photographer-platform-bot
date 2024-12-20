@@ -48,6 +48,8 @@ const BookingSchema = new mongoose.Schema({
 	},
 	// Новое поле для проверки, является ли клиент VIP
 	isVip: { type: Boolean, default: false }, // Статус VIP клиента
+	price: Number, // Добавлено поле для суммы
+	discount: Number, // Добавлено поле для скидки
 });
 
 module.exports = mongoose.model("Booking", BookingSchema);

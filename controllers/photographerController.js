@@ -189,6 +189,51 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				);
 
 				break;
+			case "awaiting_price":
+				const bookingId = state.bookingId; // Забираем bookingId из состояния
+
+				// Сохраняем сумму и спрашиваем скидку
+				stateController.update(chatId, {
+					price: Number(text),
+					action: "awaiting_discount", // Переходим к следующему шагу
+				});
+				await bot.sendMessage(
+					chatId,
+					`Введите скидку (в рублях или 0, если её нет):`
+				);
+				break;
+
+			case "awaiting_discount":
+				const { price } = state; // Получаем price из состояния
+				const discount = Number(text);
+
+				// Обновляем карточку бронирования
+				await Booking.findByIdAndUpdate(state.bookingId, {
+					price,
+					discount,
+					status: "confirmed", // Подтверждаем бронирование
+				});
+
+				// Уведомляем фотографа
+				await bot.sendMessage(
+					chatId,
+					`Бронирование подтверждено. Сумма: ${price} ₽, скидка: ${discount} ₽.`
+				);
+
+				// Уведомляем клиента
+				const booking = await Booking.findById(
+					state.bookingId
+				).populate("clientId");
+				if (booking.clientId) {
+					await bot.sendMessage(
+						booking.clientId.telegramId,
+						`Ваше бронирование подтверждено! Сумма: ${price} ₽, скидка: ${discount} ₽.`
+					);
+				}
+
+				// Очищаем состояние
+				stateController.clear(chatId);
+				break;
 
 			case "decline_reschedule_photographer":
 				booking.status = "declined";
