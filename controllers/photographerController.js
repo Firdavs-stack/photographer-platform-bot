@@ -610,7 +610,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 				buttons.push([
 					{
 						text: "Подтвердить",
-						callback_data: `confirm_booking_photographer;${booking._id}`,
+						callback_data: `confirm_booking_photographer;${booking._id.trim()}`,
 					},
 					{
 						text: "Отменить",
