@@ -123,8 +123,6 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 		await handlePagination(bot, chatId, data);
 	} else if (data.startsWith("confirm_booking;")) {
 		await confirmBooking(bot, chatId, data, client);
-	} else if (data.startsWith("confirm_booking_photographer;")) {
-		await confirmPhotographerBooking(bot, chatId, data, client);
 	} else {
 		bot.sendMessage(
 			chatId,
@@ -242,6 +240,9 @@ async function handlePhotographerCallback(
 			break;
 		case data.startsWith("delete_photo_"):
 			await deletePhoto(bot, query, photographer);
+			break;
+		case data.startsWith("confirm_booking_photographer;"):
+			await confirmPhotographerBooking(bot, chatId, data, client);
 			break;
 		case data.startsWith("edit_photo_"):
 			await editPhotoInfo(bot, query, photographer);
