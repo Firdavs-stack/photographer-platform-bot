@@ -195,7 +195,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				// Сохраняем сумму и спрашиваем скидку
 				stateController.update(chatId, {
 					price: Number(text),
-					action: "awaiting_discount", // Переходим к следующему шагу
+					state: "awaiting_discount", // Переходим к следующему шагу
 				});
 				await bot.sendMessage(
 					chatId,

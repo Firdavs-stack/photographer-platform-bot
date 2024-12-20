@@ -516,7 +516,7 @@ async function confirmPhotographerBooking(bot, chatId, data, client) {
 
 	// Сохраняем состояние фотографа
 	await stateController.setState(chatId, {
-		action: "awaiting_price",
+		state: "awaiting_price",
 		bookingId,
 	});
 
