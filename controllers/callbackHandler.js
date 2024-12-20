@@ -59,7 +59,7 @@ async function handleCallbackQuery(bot, query) {
 		return;
 	}
 
-	if (data.startsWith("confirm_")) {
+	if (data.startsWith("confirm_booking_photographer")) {
 		const bookingId = data.split("_")[1];
 
 		// Спрашиваем сумму
