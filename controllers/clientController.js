@@ -166,7 +166,7 @@ async function handleClientMessage(bot, msg, client) {
 					buttons.push([
 						{
 							text: "✅ Подтвердить",
-							callback_data: `confirm_booking;${booking._id}`,
+							callback_data: `confirm_booking_client;${booking._id}`,
 						},
 					]);
 				}
