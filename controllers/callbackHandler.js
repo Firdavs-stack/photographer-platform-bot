@@ -514,8 +514,6 @@ async function rejectPayment(bot, query, photographer) {
 async function confirmPhotographerBooking(bot, chatId, data) {
 	const bookingId = data.split(";")[1];
 
-	bot.sendMessage(chatId, `${bookingId}`);
-
 	// Сохраняем состояние фотографа
 	await stateController.setState(chatId, {
 		state: "awaiting_price",

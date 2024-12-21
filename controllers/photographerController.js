@@ -191,6 +191,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				break;
 			case "awaiting_price":
 				const bookingId = state.bookingId; // Забираем bookingId из состояния
+
 				// Сохраняем сумму и спрашиваем скидку
 				stateController.updateState(chatId, {
 					price: Number(text),
