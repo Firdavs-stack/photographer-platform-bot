@@ -37,6 +37,7 @@ async function handleClientMessage(bot, msg, client) {
 		"⚙️ Настройки",
 		"📅 Мои бронирования",
 		"👤 Мой аккаунт",
+		"💳 Реквизиты",
 	];
 	const chatId = msg.chat.id;
 	const text = msg.text;

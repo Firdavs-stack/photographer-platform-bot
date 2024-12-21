@@ -116,7 +116,7 @@ bot.on("message", async (msg) => {
 								keyboard: [
 									["🔍 Поиск фотографов"],
 									["👤 Мой аккаунт", "📅 Мои бронирования"],
-									["⚙️ Настройки"],
+									["⚙️ Настройки", "💳 Реквизиты"],
 								],
 								one_time_keyboard: false,
 								resize_keyboard: true,
@@ -302,7 +302,7 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
 				keyboard: [
 					["🔍 Поиск фотографов"],
 					["👤 Мой аккаунт", "📅 Мои бронирования"],
-					["⚙️ Настройки"],
+					["⚙️ Настройки", "💳 Реквизиты"],
 				],
 				one_time_keyboard: false,
 				resize_keyboard: true,

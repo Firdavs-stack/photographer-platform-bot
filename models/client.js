@@ -22,6 +22,7 @@ const clientSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Photographer",
 	}, // Это поле
+	cardNumber: { type: String, default: null }, // Номер карты клиента
 });
 
 const Client = mongoose.model("Client", clientSchema);
