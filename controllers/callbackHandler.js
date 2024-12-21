@@ -523,7 +523,9 @@ async function confirmPhotographerBooking(bot, chatId, data) {
 	// Спрашиваем сумму
 	await bot.sendMessage(
 		chatId,
-		`Введите сумму, которую вы договорились с клиентом:`
+		`Введите сумму, которую вы договорились с клиентом:${stateController.getState(
+			chatId
+		)}`
 	);
 }
 
