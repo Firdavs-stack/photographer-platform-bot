@@ -34,7 +34,7 @@ function clearState(chatId) {
  * @param {Number} chatId - The chat ID of the user.
  * @param {Object} update - An object containing the fields to update.
  */
-function updateState(chatId, update) {
+function 	(chatId, update) {
 	const currentState = getState(chatId) || {};
 	userStates[chatId] = { ...currentState, ...update };
 }

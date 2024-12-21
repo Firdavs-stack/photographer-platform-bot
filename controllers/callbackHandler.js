@@ -242,7 +242,6 @@ async function handlePhotographerCallback(
 			await deletePhoto(bot, query, photographer);
 			break;
 		case data.startsWith("confirm_booking_photographer;"):
-			bot.sendMessage(chatId, `${data}`);
 			await confirmPhotographerBooking(bot, chatId, data);
 			break;
 		case data.startsWith("edit_photo_"):
