@@ -243,7 +243,7 @@ async function handlePhotographerCallback(
 			break;
 		case data.startsWith("confirm_booking_photographer;"):
 			bot.sendMessage(chatId, `${data}`);
-			await confirmPhotographerBooking(bot, chatId, data, client);
+			await confirmPhotographerBooking(bot, chatId, data);
 			break;
 		case data.startsWith("edit_photo_"):
 			await editPhotoInfo(bot, query, photographer);
@@ -512,9 +512,10 @@ async function rejectPayment(bot, query, photographer) {
 	}
 }
 
-async function confirmPhotographerBooking(bot, chatId, data, client) {
-	bot.sendMessage(chatId, "piska");
+async function confirmPhotographerBooking(bot, chatId, data) {
 	const bookingId = data.split(";")[1];
+
+	bot.sendMessage(chatId, `${bookingId}`);
 
 	// Сохраняем состояние фотографа
 	await stateController.setState(chatId, {
