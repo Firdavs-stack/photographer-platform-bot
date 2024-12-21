@@ -197,11 +197,10 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 					price: Number(text),
 					state: "awaiting_discount", // Переходим к следующему шагу
 				});
+				let test = await stateController.getState();
 				await bot.sendMessage(
 					chatId,
-					`Введите скидку (в рублях или 0, если её нет):${
-						stateController.getState().state
-					}`
+					`Введите скидку (в рублях или 0, если её нет):${test}`
 				);
 				break;
 
