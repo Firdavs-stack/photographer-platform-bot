@@ -204,8 +204,6 @@ async function handlePhotographerCallback(
 		return; // Прерываем выполнение, если нажата одна из стандартных кнопок
 	}
 
-	bot.sendMessage(chatId, `${data}`);
-
 	switch (true) {
 		case data.startsWith("confirm_payment;"):
 			await confirmPayment(bot, query, photographer);
@@ -244,6 +242,7 @@ async function handlePhotographerCallback(
 			await deletePhoto(bot, query, photographer);
 			break;
 		case data.startsWith("confirm_booking_photographer;"):
+			bot.sendMessage(chatId, `${data}`);
 			await confirmPhotographerBooking(bot, chatId, data, client);
 			break;
 		case data.startsWith("edit_photo_"):
