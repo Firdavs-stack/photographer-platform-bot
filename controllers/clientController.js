@@ -142,84 +142,83 @@ async function handleClientMessage(bot, msg, client) {
 			return;
 		}
 	}
-	if (text === "💳 Реквизиты")
-		if (text === "⚙️ Настройки") {
-			// Handle text commands
-			bot.sendMessage(
-				chatId,
-				`Ваши данные:\nИмя: ${client.name}\nТелефон: ${client.phone}\n\nДля обновления отправьте новые данные в формате 'Имя; Телефон'.`
-			);
-			stateController.setState(chatId, {
-				state: "awaiting_profile_update",
-			});
-		} else if (text === "📅 Мои бронирования") {
-			const bookings = await Booking.find({ clientId: client._id });
-			if (bookings.length === 0) {
-				bot.sendMessage(chatId, "У вас нет бронирований.");
-			} else {
-				for (const booking of bookings) {
-					let message = `Фотограф: ${
-						booking.photographerName || "Неизвестно"
-					}\nДата: ${booking.date}\nВремя: ${
-						booking.timeSlot
-					}\nСтатус: ${booking.status}\n`;
+	if (text === "⚙️ Настройки") {
+		// Handle text commands
+		bot.sendMessage(
+			chatId,
+			`Ваши данные:\nИмя: ${client.name}\nТелефон: ${client.phone}\n\nДля обновления отправьте новые данные в формате 'Имя; Телефон'.`
+		);
+		stateController.setState(chatId, {
+			state: "awaiting_profile_update",
+		});
+	} else if (text === "📅 Мои бронирования") {
+		const bookings = await Booking.find({ clientId: client._id });
+		if (bookings.length === 0) {
+			bot.sendMessage(chatId, "У вас нет бронирований.");
+		} else {
+			for (const booking of bookings) {
+				let message = `Фотограф: ${
+					booking.photographerName || "Неизвестно"
+				}\nДата: ${booking.date}\nВремя: ${booking.timeSlot}\nСтатус: ${
+					booking.status
+				}\n`;
 
-					const buttons = [];
-					if (booking.status === "awaiting_prepayment") {
-						buttons.push([
-							{
-								text: "✅ Подтвердить",
-								callback_data: `confirm_booking_client;${booking._id}`,
-							},
-						]);
-					}
+				const buttons = [];
+				if (booking.status === "awaiting_prepayment") {
+					buttons.push([
+						{
+							text: "✅ Подтвердить",
+							callback_data: `confirm_booking_client;${booking._id}`,
+						},
+					]);
+				}
 
-					// Add button for rescheduling
-					if (
-						[
-							"approved",
-							"awaiting_prepayment",
-							"awaiting_confirmation",
-							"confirmed",
-						].includes(booking.status)
-					) {
-						buttons.push([
-							{
-								text: "Перебронировать",
-								callback_data: `client_reschedule;${booking._id}`,
-							},
-						]);
-					}
+				// Add button for rescheduling
+				if (
+					[
+						"approved",
+						"awaiting_prepayment",
+						"awaiting_confirmation",
+						"confirmed",
+					].includes(booking.status)
+				) {
+					buttons.push([
+						{
+							text: "Перебронировать",
+							callback_data: `client_reschedule;${booking._id}`,
+						},
+					]);
+				}
 
-					// Handle reschedule request from photographer
-					if (
-						booking.reschedule &&
-						booking.reschedule.requestedBy === "photographer" &&
-						booking.reschedule.status === "pending"
-					) {
-						message += `Запрос на перебронировку от фотографа: новая дата: ${booking.reschedule.newDate}, время: ${booking.reschedule.newTimeSlot}\n`;
-						buttons.push([
-							{
-								text: "Принять",
-								callback_data: `accept_reschedule_client;${booking._id}`,
-							},
-							{
-								text: "Отклонить",
-								callback_data: `decline_reschedule_client;${booking._id}`,
-							},
-						]);
-					}
+				// Handle reschedule request from photographer
+				if (
+					booking.reschedule &&
+					booking.reschedule.requestedBy === "photographer" &&
+					booking.reschedule.status === "pending"
+				) {
+					message += `Запрос на перебронировку от фотографа: новая дата: ${booking.reschedule.newDate}, время: ${booking.reschedule.newTimeSlot}\n`;
+					buttons.push([
+						{
+							text: "Принять",
+							callback_data: `accept_reschedule_client;${booking._id}`,
+						},
+						{
+							text: "Отклонить",
+							callback_data: `decline_reschedule_client;${booking._id}`,
+						},
+					]);
+				}
 
-					if (buttons.length > 0) {
-						bot.sendMessage(chatId, message, {
-							reply_markup: { inline_keyboard: buttons },
-						});
-					} else {
-						bot.sendMessage(chatId, message);
-					}
+				if (buttons.length > 0) {
+					bot.sendMessage(chatId, message, {
+						reply_markup: { inline_keyboard: buttons },
+					});
+				} else {
+					bot.sendMessage(chatId, message);
 				}
 			}
 		}
+	}
 }
 
 async function handleClientPhoto(bot, msg, client, state) {
