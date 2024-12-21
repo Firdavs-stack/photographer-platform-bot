@@ -199,7 +199,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				});
 				await bot.sendMessage(
 					chatId,
-					`Введите скидку (в рублях или 0, если её нет):`
+					`Введите скидку (в рублях или 0, если её нет):${stateController.getState.state}`
 				);
 				break;
 
