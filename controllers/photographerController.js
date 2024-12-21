@@ -211,7 +211,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 				await Booking.findByIdAndUpdate(state.bookingId, {
 					price,
 					discount,
-					status: "confirmed", // Подтверждаем бронирование
+					status: "completed", // Подтверждаем бронирование
 				});
 
 				// Уведомляем фотографа
@@ -606,7 +606,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 			// Преобразуем startTime и endTime в полные объекты Date
 			// const startDateTime = new Date(`${booking.date}T${startTime}:00`);
 			const endDateTime = new Date(`${booking.date}T${endTime}:00`);
-			if (currentDate >= endDateTime) {
+			if (currentDate >= endDateTime && booking.status == "confirmed") {
 				buttons.push([
 					{
 						text: "Подтвердить",
