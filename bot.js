@@ -228,52 +228,57 @@ bot.on("photo", async (msg) => {
 				{ parse_mode: "Markdown" }
 			);
 		} else if (state && state.state === "cancellingBooking") {
-			bot.sendMessage(chatId, "SOOOu");
-			const bookingId = state.bookingInfo; // Получаем ID бронирования из состояния
-			const photoId = msg.photo[msg.photo.length - 1].file_id; // ID фотографии
+			try {
+				bot.sendMessage(chatId, "SOOOu");
+				const bookingId = state.bookingInfo; // Получаем ID бронирования из состояния
+				const photoId = msg.photo[msg.photo.length - 1].file_id; // ID фотографии
 
-			// Обновляем существующее бронирование, добавляя скриншот
-			const booking = await Booking.findById(bookingId);
-			if (!booking) {
-				return bot.sendMessage(
+				// Обновляем существующее бронирование, добавляя скриншот
+				const booking = await Booking.findById(bookingId);
+				if (!booking) {
+					return bot.sendMessage(
+						chatId,
+						"Бронирование не найдено. Пожалуйста, попробуйте еще раз."
+					);
+				}
+
+				// Сохраняем ID скриншота в бронировании
+				booking.canceledScreenshot = photoId;
+				booking.status = "awaiting_cancelling_confirmation"; // Обновляем статус бронирования
+				await booking.save(); // Сохраняем изменения в базе данных
+
+				bot.sendMessage(chatId, `${booking}`);
+				// Уведомление клиенту
+				bot.sendMessage(
 					chatId,
-					"Бронирование не найдено. Пожалуйста, попробуйте еще раз."
+					"Спасибо! Ваш скриншот оплаты получен. Ожидайте подтверждения от клиента."
 				);
-			}
-
-			// Сохраняем ID скриншота в бронировании
-			booking.canceledScreenshot = photoId;
-			booking.status = "awaiting_cancelling_confirmation"; // Обновляем статус бронирования
-			await booking.save(); // Сохраняем изменения в базе данных
-
-			bot.sendMessage(chatId, `${booking}`);
-			// Уведомление клиенту
-			bot.sendMessage(
-				chatId,
-				"Спасибо! Ваш скриншот оплаты получен. Ожидайте подтверждения от клиента."
-			);
-			const clientData = await Photographer.findById(
-				booking.photographerId
-			);
-			if (clientData) {
-				await bot.sendPhoto(clientData.telegramId, photoId, {
-					caption: `Новое запрос отмены от фотографа *${photographer.firstName}. Пожалуйста, подтвердите отмену бронирования или перебронируйте.`,
-					parse_mode: "Markdown",
-					reply_markup: {
-						inline_keyboard: [
-							[
-								{
-									text: "✅ Подтвердить отмену",
-									callback_data: `confirm_cancelling;${booking._id}`,
-								},
-								{
-									text: "Перебронировать",
-									callback_data: `client_reschedule;${booking._id}`,
-								},
+				const clientData = await Photographer.findById(
+					booking.photographerId
+				);
+				if (clientData) {
+					await bot.sendPhoto(clientData.telegramId, photoId, {
+						caption: `Новое запрос отмены от фотографа *${photographer.firstName}. Пожалуйста, подтвердите отмену бронирования или перебронируйте.`,
+						parse_mode: "Markdown",
+						reply_markup: {
+							inline_keyboard: [
+								[
+									{
+										text: "✅ Подтвердить отмену",
+										callback_data: `confirm_cancelling;${booking._id}`,
+									},
+									{
+										text: "Перебронировать",
+										callback_data: `client_reschedule;${booking._id}`,
+									},
+								],
 							],
-						],
-					},
-				});
+						},
+					});
+				}
+			} catch (error) {
+				console.error("Error saving booking:", error);
+				bot.sendMessage(chatId, `Ошибка сохранения: ${error.message}`);
 			}
 		} else {
 			// Если состояние не соответствует ожиданиям
