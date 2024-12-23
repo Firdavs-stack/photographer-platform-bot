@@ -205,8 +205,11 @@ async function handlePhotographerCallback(
 	}
 
 	switch (true) {
-		case data.startsWith("confirm_payment;"):
-			await confirmPayment(bot, query, photographer);
+		case data.startsWith("confirm_cancelling;"):
+			await confirmCancelling(bot, chatId, query, data, photographer);
+			break;
+		case data.startsWith("reject_cancelling"):
+			await declineCancelling(bot, query, photographer);
 			break;
 		case data.startsWith("toggle_time;"):
 			await toggleTime(bot, chatId, query, data, photographer, state);
@@ -536,9 +539,13 @@ async function cancelPhotographerBooking(bot, chatId, data) {
 	try {
 		const bookingId = data.split(";")[1];
 
-		bot.sendMessage(chatId, bookingId);
-		const response = await axios.delete(
-			`https://api.two2one.uz/api/bookings/${bookingId}`
+		stateController.setState(chatId, {
+			state: "deleting_booking",
+			bookingInfo: bookingId,
+		});
+		bot.sendMessage(
+			chatId,
+			"Для отмены бронирования скидывайте скриншот с подтверждением оплаты средств"
 		);
 	} catch (error) {
 		console.error("Произошла ошибка", error);
@@ -645,6 +652,19 @@ async function deletePhoto(bot, query, photographer) {
 	);
 }
 
+async function confirmCancelling(bot, chatId, query, data, photographer) {
+	if (isDefaultCommand(data, photographerDefaultCommands)) {
+		return;
+	}
+	const bookingId = data.split(";")[1];
+	const response = axios.delete(
+		`https://api.two2one.uz/api/bookings/${bookingId}`
+	);
+
+	if (response) {
+		bot.sendMessage(chatId, "Бронирование успешно отменено");
+	}
+}
 // Обновление временных промежутков
 async function toggleTime(bot, chatId, query, data, photographer, state) {
 	if (isDefaultCommand(data, photographerDefaultCommands)) {

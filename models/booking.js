@@ -28,6 +28,7 @@ const BookingSchema = new mongoose.Schema({
 	},
 	prepayment: { type: Number, required: true, default: 0 }, // Сумма предоплаты
 	paymentScreenshot: { type: String, required: false }, // ID файла скриншота оплаты
+	canceledScreenshot: { type: String, required: false },
 	clientName: { type: String }, // Имя клиента
 	photographerName: { type: String }, // Имя фотографа
 	details: { type: String }, // Дополнительные детали бронирования
