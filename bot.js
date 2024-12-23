@@ -230,7 +230,7 @@ bot.on("photo", async (msg) => {
 				"Фотография добавлена. Теперь отправьте текстовые описания для всех фотографий в формате: `Название; Категория | Название; Категория`.\nИли введите /done, если хотите завершить добавление фотографий без описаний.",
 				{ parse_mode: "Markdown" }
 			);
-		} else if (state && state.state === "deleting_booking") {
+		} else if (state && state.state === "cancellingBooking") {
 			const bookingId = state.bookingInfo._id; // Получаем ID бронирования из состояния
 			const photoId = msg.photo[msg.photo.length - 1].file_id; // ID фотографии
 
@@ -245,7 +245,7 @@ bot.on("photo", async (msg) => {
 
 			// Сохраняем ID скриншота в бронировании
 			booking.canceledScreenshot = photoId;
-			booking.status = "awaiting_confirmation"; // Обновляем статус бронирования
+			booking.status = "awaiting_cancelling_confirmation"; // Обновляем статус бронирования
 			await booking.save(); // Сохраняем изменения в базе данных
 
 			// Уведомление клиенту
@@ -258,7 +258,7 @@ bot.on("photo", async (msg) => {
 			);
 			if (clientData) {
 				await bot.sendPhoto(clientData.telegramId, photoId, {
-					caption: `Новое бронирование от клиента *${client.name}* на *${booking.date}* в *${booking.timeSlot}*. Пожалуйста, подтвердите или отклоните оплату.`,
+					caption: `Новое запрос отмены от фотографа *${photographer.firstName}. Пожалуйста, подтвердите отмену бронирования или перебронируйте.`,
 					parse_mode: "Markdown",
 					reply_markup: {
 						inline_keyboard: [
@@ -268,8 +268,8 @@ bot.on("photo", async (msg) => {
 									callback_data: `confirm_cancelling;${booking._id}`,
 								},
 								{
-									text: "❌ Отклонить отмену",
-									callback_data: `reject_cancelling;${booking._id}`,
+									text: "Перебронировать",
+									callback_data: `client_reschedule;${booking._id}`,
 								},
 							],
 						],
