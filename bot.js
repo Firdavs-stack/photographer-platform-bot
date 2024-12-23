@@ -215,7 +215,6 @@ bot.on("photo", async (msg) => {
 			);
 		}
 	} else if (photographer) {
-		bot.sendMessage(chatId, "SOOOu");
 		if (state && state.state === "awaiting_portfolio_photos") {
 			const tempPhotos = state.tempPhotos || [];
 			const photoId = msg.photo[msg.photo.length - 1].file_id;
@@ -233,6 +232,7 @@ bot.on("photo", async (msg) => {
 			const bookingId = state.bookingInfo._id; // Получаем ID бронирования из состояния
 			const photoId = msg.photo[msg.photo.length - 1].file_id; // ID фотографии
 
+			bot.sendMessage(chatId, bookingId);
 			// Обновляем существующее бронирование, добавляя скриншот
 			const booking = await Booking.findById(bookingId);
 			if (!booking) {
