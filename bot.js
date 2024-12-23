@@ -148,7 +148,7 @@ bot.on("message", async (msg) => {
 bot.on("photo", async (msg) => {
 	const chatId = msg.chat.id;
 	const state = await stateController.getState(chatId);
-	console.log(state);
+	bot.sendMessage(chatId, state);
 	const client = await Client.findOne({ telegramId: chatId.toString() });
 	const photographer = await Photographer.findOne({
 		telegramId: chatId.toString(),
