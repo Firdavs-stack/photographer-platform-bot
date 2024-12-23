@@ -107,6 +107,8 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 	// Обработка различных callback-запросов клиентов
 	if (data.startsWith("accept_reschedule_client;")) {
 		await acceptRescheduleClient(bot, chatId, data, client);
+	} else if (data.startsWith("confirm_cancelling")) {
+		await confirmCancelling(bot, chatId, query, data, photographer);
 	} else if (data.startsWith("decline_reschedule_client;")) {
 		await declineRescheduleClient(bot, chatId, data, client);
 	} else if (data.startsWith("client_reschedule;")) {
@@ -207,9 +209,6 @@ async function handlePhotographerCallback(
 	switch (true) {
 		case data.startsWith("confirm_payment;"):
 			await confirmPayment(bot, query, photographer);
-			break;
-		case data.startsWith("confirm_cancelling"):
-			await confirmCancelling(bot, chatId, query, data, photographer);
 			break;
 		case data.startsWith("cancel_booking;"):
 			await requestToCancelling(bot, chatId, query, data, photographer);
