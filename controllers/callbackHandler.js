@@ -108,7 +108,7 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 	if (data.startsWith("accept_reschedule_client;")) {
 		await acceptRescheduleClient(bot, chatId, data, client);
 	} else if (data.startsWith("confirm_cancelling")) {
-		await confirmCancelling(bot, chatId, query, data, photographer);
+		await confirmCancelling(bot, chatId, query, data);
 	} else if (data.startsWith("decline_reschedule_client;")) {
 		await declineRescheduleClient(bot, chatId, data, client);
 	} else if (data.startsWith("client_reschedule;")) {
