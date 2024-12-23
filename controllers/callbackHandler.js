@@ -437,6 +437,7 @@ async function requestToCancelling(bot, chatId, query, data, photographer) {
 	bot.sendMessage(chatId, "siu");
 	const bookingId = data.split(";")[1];
 
+	bot.sendMessage(chatId, `${bookingId} ${data}`);
 	stateController.setState(chatId, {
 		state: "cancellingBooking",
 		bookingInfo: bookingId,
