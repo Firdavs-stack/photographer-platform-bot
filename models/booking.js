@@ -23,6 +23,7 @@ const BookingSchema = new mongoose.Schema({
 			"completed",
 			"cancelled",
 			"reschedule_requested",
+			"awaiting_cancelling_confirmation",
 		],
 		default: "awaiting_prepayment",
 	},
@@ -43,12 +44,7 @@ const BookingSchema = new mongoose.Schema({
 		newTimeSlot: { type: String, required: false },
 		status: {
 			type: String,
-			enum: [
-				"pending",
-				"accepted",
-				"declined",
-				"awaiting_cancelling_confirmation",
-			],
+			enum: ["pending", "accepted", "declined"],
 			required: false,
 		},
 	},
