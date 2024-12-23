@@ -609,7 +609,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 			if (currentDate >= endDateTime && booking.status == "confirmed") {
 				buttons.push([
 					{
-						text: "Подтвердить",
+						text: "Хуердить",
 						callback_data: `confirm_booking_photographer;${booking._id}`,
 					},
 					{
