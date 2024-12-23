@@ -253,7 +253,7 @@ bot.on("photo", async (msg) => {
 					chatId,
 					"Спасибо! Ваш скриншот оплаты получен. Ожидайте подтверждения от клиента."
 				);
-				const clientData = await Photographer.findById(
+				const clientData = await Client.findById(
 					booking.photographerId
 				);
 				if (clientData) {
