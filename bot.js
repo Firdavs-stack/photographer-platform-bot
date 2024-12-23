@@ -259,7 +259,6 @@ bot.on("photo", async (msg) => {
 				if (clientData) {
 					await bot.sendPhoto(clientData.telegramId, photoId, {
 						caption: `Новое запрос отмены от фотографа *${photographer.firstName}. Пожалуйста, подтвердите отмену бронирования или перебронируйте.`,
-						parse_mode: "Markdown",
 						reply_markup: {
 							inline_keyboard: [
 								[
