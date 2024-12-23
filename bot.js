@@ -253,9 +253,7 @@ bot.on("photo", async (msg) => {
 					chatId,
 					"Спасибо! Ваш скриншот оплаты получен. Ожидайте подтверждения от клиента."
 				);
-				const clientData = await Client.findById(
-					booking.photographerId
-				);
+				const clientData = await Client.findById(booking.clientId);
 				if (clientData) {
 					bot.sendMessage(chatId, `${clientData}`);
 					await bot.sendPhoto(clientData.telegramId, photoId, {
