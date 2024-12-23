@@ -208,8 +208,11 @@ async function handlePhotographerCallback(
 		case data.startsWith("confirm_payment;"):
 			await confirmPayment(bot, query, photographer);
 			break;
-		case data.startsWith("cancel_booking;"):
+		case data.confirmClientCancelling("confirm_cancelling"):
 			await confirmCancelling(bot, chatId, query, data, photographer);
+			break;
+		case data.startsWith("cancel_booking;"):
+			await requestToCancelling(bot, chatId, query, data, photographer);
 			break;
 		case data.startsWith("toggle_time;"):
 			await toggleTime(bot, chatId, query, data, photographer, state);
@@ -430,19 +433,27 @@ async function handlePhotographerReschedule(bot, query, photographer) {
 	}
 }
 
-async function confirmCancelling(bot, chatId, query, data, photographer) {
+async function requestToCancelling(bot, chatId, query, data, photographer) {
 	const bookingId = data.split(";")[1];
 
 	stateController.setState({
 		state: "cancellingBooking",
 	});
-	// const response = await axios.delete(
-	// 	`https://api.two2one.uz/api/bookings/${bookingId}`
-	// );
 
-	// if (response) {
-	// 	bot.sendMessage(chatId, "Бронирование успешно отменено");
-	// }
+	bot.sendMessage(
+		chatId,
+		"Пришлите скриншот подтверждающий возврат средств!"
+	);
+}
+
+async function confirmCancelling(bot, chatId, query, data, photographer) {
+	const bookingId = data.split(";")[1];
+	const response = await axios.delete(
+		`https://api.two2one.uz/api/bookings/${bookingId}`
+	);
+	if (response) {
+		bot.sendMessage(chatId, "Бронирование успешно отменено");
+	}
 }
 
 // Функция для обработки подтверждения оплаты
