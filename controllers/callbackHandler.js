@@ -443,9 +443,9 @@ async function requestToCancelling(bot, chatId, query, data, photographer) {
 
 	bot.sendMessage(
 		chatId,
-		`Пришлите скриншот подтверждающий возврат средств!${stateController.getState(
-			chatId
-		)}`
+		`Пришлите скриншот подтверждающий возврат средств!${
+			stateController.getState(chatId).state
+		}`
 	);
 }
 
