@@ -208,6 +208,9 @@ async function handlePhotographerCallback(
 		case data.startsWith("confirm_payment;"):
 			await confirmPayment(bot, query, photographer);
 			break;
+		case data.startsWith("confirm_cancelling;"):
+			await confirmCancelling(bot, chatId, query, data, photographer);
+			break;
 		case data.startsWith("toggle_time;"):
 			await toggleTime(bot, chatId, query, data, photographer, state);
 			break;
@@ -424,6 +427,18 @@ async function handlePhotographerReschedule(bot, query, photographer) {
 
 		// Очистить состояние
 		stateController.clearState(chatId);
+	}
+}
+
+async function confirmCancelling(bot, chatId, query, data, photographer) {
+	const bookingId = data.split(";")[1];
+
+	const response = await axios.delete(
+		`https://api.two2one.uz/api/bookings/${bookingId}`
+	);
+
+	if (response) {
+		bot.sendMessage(chatId, "Бронирование успешно отменено");
 	}
 }
 
