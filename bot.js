@@ -232,7 +232,7 @@ bot.on("photo", async (msg) => {
 			const bookingId = state.bookingInfo._id; // Получаем ID бронирования из состояния
 			const photoId = msg.photo[msg.photo.length - 1].file_id; // ID фотографии
 
-			bot.sendMessage(chatId, bookingId);
+			bot.sendMessage(chatId, `${bookingId}`);
 			// Обновляем существующее бронирование, добавляя скриншот
 			const booking = await Booking.findById(bookingId);
 			if (!booking) {
