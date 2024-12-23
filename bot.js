@@ -148,7 +148,6 @@ bot.on("message", async (msg) => {
 bot.on("photo", async (msg) => {
 	const chatId = msg.chat.id;
 	const state = await stateController.getState(chatId);
-	bot.sendMessage(chatId, state);
 	const client = await Client.findOne({ telegramId: chatId.toString() });
 	const photographer = await Photographer.findOne({
 		telegramId: chatId.toString(),
@@ -215,9 +214,7 @@ bot.on("photo", async (msg) => {
 				"Пожалуйста, выберите дату и время для бронирования сначала."
 			);
 		}
-	}
-	// Проверка, является ли пользователь фотографом
-	else if (photographer) {
+	} else if (photographer) {
 		if (state && state.state === "awaiting_portfolio_photos") {
 			const tempPhotos = state.tempPhotos || [];
 			const photoId = msg.photo[msg.photo.length - 1].file_id;
