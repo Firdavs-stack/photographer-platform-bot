@@ -203,7 +203,6 @@ async function handlePhotographerCallback(
 	if (isDefaultCommand(data, photographerDefaultCommands)) {
 		return; // Прерываем выполнение, если нажата одна из стандартных кнопок
 	}
-	bot.sendMessage(chatId, data);
 
 	switch (true) {
 		case data.startsWith("confirm_payment;"):
@@ -553,9 +552,7 @@ async function confirmPhotographerBooking(bot, chatId, data) {
 	// Спрашиваем сумму
 	await bot.sendMessage(
 		chatId,
-		`Введите сумму, которую вы договорились с клиентом:${
-			stateController.getState(chatId).state
-		}`
+		`Введите сумму, которую вы договорились с клиентом:`
 	);
 }
 
