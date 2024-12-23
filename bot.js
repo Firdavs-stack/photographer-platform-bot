@@ -214,7 +214,8 @@ bot.on("photo", async (msg) => {
 				"Пожалуйста, выберите дату и время для бронирования сначала."
 			);
 		}
-	} else{
+	} else if (photographer) {
+		bot.sendMessage(chatId, "SOOOu");
 		if (state && state.state === "awaiting_portfolio_photos") {
 			const tempPhotos = state.tempPhotos || [];
 			const photoId = msg.photo[msg.photo.length - 1].file_id;
