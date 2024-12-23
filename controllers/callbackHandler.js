@@ -205,14 +205,8 @@ async function handlePhotographerCallback(
 	}
 
 	switch (true) {
-		case data.startsWith("confirm_cancelling;"):
+		case data.startsWith("confirm_payment;"):
 			await confirmPayment(bot, query, photographer);
-			break;
-		case data.startsWith("confirm_cancelling"):
-			await confirmCancelling(bot, query, photographer);
-			break;
-		case data.startsWith("reject_cancelling"):
-			await rejectCancelling(bot, query, photographer);
 			break;
 		case data.startsWith("toggle_time;"):
 			await toggleTime(bot, chatId, query, data, photographer, state);
@@ -249,9 +243,6 @@ async function handlePhotographerCallback(
 			break;
 		case data.startsWith("confirm_booking_photographer;"):
 			await confirmPhotographerBooking(bot, chatId, data);
-			break;
-		case data.startsWith("cancel_booking"):
-			await cancelPhotographerBooking(bot, chatId, data);
 			break;
 		case data.startsWith("edit_photo_"):
 			await editPhotoInfo(bot, query, photographer);
@@ -436,20 +427,6 @@ async function handlePhotographerReschedule(bot, query, photographer) {
 	}
 }
 
-async function confirmCancelling(bot, chatId, query, data, photographer) {
-	if (isDefaultCommand(data, photographerDefaultCommands)) {
-		return;
-	}
-	const bookingId = data.split(";")[1];
-	const response = axios.delete(
-		`https://api.two2one.uz/api/bookings/${bookingId}`
-	);
-
-	if (response) {
-		bot.sendMessage(chatId, "Бронирование успешно отменено");
-	}
-}
-
 // Функция для обработки подтверждения оплаты
 async function confirmPayment(bot, query, photographer) {
 	try {
@@ -550,24 +527,6 @@ async function confirmPhotographerBooking(bot, chatId, data) {
 			stateController.getState(chatId).state
 		}`
 	);
-}
-
-async function cancelPhotographerBooking(bot, chatId, data) {
-	try {
-		const bookingId = data.split(";")[1];
-
-		stateController.setState(chatId, {
-			state: "deleting_booking",
-			bookingInfo: bookingId,
-		});
-		bot.sendMessage(
-			chatId,
-			"Для отмены бронирования скидывайте скриншот с подтверждением оплаты средств"
-		);
-	} catch (error) {
-		console.error("Произошла ошибка", error);
-		bot.sendMessage(chatId, "Произошла ошибка при отмене бронирования.");
-	}
 }
 
 async function confirmBooking(bot, chatId, data, client) {
