@@ -442,7 +442,7 @@ async function requestToCancelling(bot, chatId, query, data, photographer) {
 		"Пришлите скриншот подтверждающий возврат средств!"
 	);
 	bot.sendMessage(chatId, stateController.getState(chatId));
-	stateController.setState({
+	stateController.setState(chatId, {
 		state: "cancellingBooking",
 	});
 }
