@@ -244,6 +244,9 @@ async function handlePhotographerCallback(
 		case data.startsWith("confirm_booking_photographer;"):
 			await confirmPhotographerBooking(bot, chatId, data);
 			break;
+		case data.startsWith("cancel_booking"):
+			await cancelPhotographerBooking(bot, chatId, data);
+			break;
 		case data.startsWith("edit_photo_"):
 			await editPhotoInfo(bot, query, photographer);
 			break;
@@ -527,6 +530,20 @@ async function confirmPhotographerBooking(bot, chatId, data) {
 			stateController.getState(chatId).state
 		}`
 	);
+}
+
+async function cancelPhotographerBooking(bot, chatId, data) {
+	try {
+		const bookingId = data.split(";")[1];
+
+		bot.sendMessage(chatId, bookingId);
+		const response = await axios.delete(
+			`https://api.two2one.uz/api/bookings/${bookingId}`
+		);
+	} catch (error) {
+		console.error("Произошла ошибка", error);
+		bot.sendMessage(chatId, "Произошла ошибка при отмене бронирования.");
+	}
 }
 
 async function confirmBooking(bot, chatId, data, client) {
