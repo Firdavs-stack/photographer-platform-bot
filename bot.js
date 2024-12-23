@@ -229,7 +229,7 @@ bot.on("photo", async (msg) => {
 			);
 		} else if (state && state.state === "cancellingBooking") {
 			bot.sendMessage(chatId, "SOOOu");
-			const bookingId = state.bookingInfo._id; // Получаем ID бронирования из состояния
+			const bookingId = state.bookingInfo; // Получаем ID бронирования из состояния
 			const photoId = msg.photo[msg.photo.length - 1].file_id; // ID фотографии
 
 			bot.sendMessage(chatId, `${bookingId}`);
