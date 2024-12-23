@@ -244,9 +244,9 @@ bot.on("photo", async (msg) => {
 			// Сохраняем ID скриншота в бронировании
 			booking.canceledScreenshot = photoId;
 			booking.status = "awaiting_cancelling_confirmation"; // Обновляем статус бронирования
-			bot.sendMessage(chatId, `${booking}`);
 			await booking.save(); // Сохраняем изменения в базе данных
 
+			bot.sendMessage(chatId, `${booking}`);
 			// Уведомление клиенту
 			bot.sendMessage(
 				chatId,
