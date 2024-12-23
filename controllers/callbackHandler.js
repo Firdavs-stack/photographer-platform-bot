@@ -437,14 +437,14 @@ async function requestToCancelling(bot, chatId, query, data, photographer) {
 	bot.sendMessage(chatId, "siu");
 	const bookingId = data.split(";")[1];
 
+	stateController.setState(chatId, {
+		state: "cancellingBooking",
+	});
+
 	bot.sendMessage(
 		chatId,
 		"Пришлите скриншот подтверждающий возврат средств!"
 	);
-	bot.sendMessage(chatId, stateController.getState(chatId));
-	stateController.setState(chatId, {
-		state: "cancellingBooking",
-	});
 }
 
 async function confirmCancelling(bot, chatId, query, data, photographer) {
