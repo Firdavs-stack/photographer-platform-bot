@@ -203,6 +203,7 @@ async function handlePhotographerCallback(
 	if (isDefaultCommand(data, photographerDefaultCommands)) {
 		return; // Прерываем выполнение, если нажата одна из стандартных кнопок
 	}
+	bot.sendMessage(chatId, data);
 
 	switch (true) {
 		case data.startsWith("confirm_payment;"):
