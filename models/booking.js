@@ -43,7 +43,12 @@ const BookingSchema = new mongoose.Schema({
 		newTimeSlot: { type: String, required: false },
 		status: {
 			type: String,
-			enum: ["pending", "accepted", "declined"],
+			enum: [
+				"pending",
+				"accepted",
+				"declined",
+				"awaiting_cancelling_confirmation",
+			],
 			required: false,
 		},
 	},
