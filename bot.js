@@ -308,10 +308,6 @@ async function processCancellationScreenshot(state, photoId, chatId, user) {
 							text: "✅ Подтвердить отмену",
 							callback_data: `confirm_cancelling;${booking._id}`,
 						},
-						{
-							text: "Перебронировать",
-							callback_data: `client_reschedule;${booking._id}`,
-						},
 					],
 				],
 			},
