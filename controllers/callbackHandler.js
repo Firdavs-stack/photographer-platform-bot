@@ -437,7 +437,7 @@ async function handlePhotographerReschedule(bot, query, photographer) {
 async function requestToCancelling(bot, chatId, query, data, photographer) {
 	bot.sendMessage(chatId, "siu");
 	const bookingId = data.split(";")[1];
-
+	bot.sendMessage(chatId, data.split(";")[2]);
 	if (data.split(";")[2]) {
 		bot.sendMessage(data.split(";")[2], `${bookingId} ${data}`);
 		stateController.setState(chatId, {
