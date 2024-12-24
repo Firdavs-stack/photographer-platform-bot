@@ -447,18 +447,13 @@ async function requestToCancelling(bot, chatId, query, data, user) {
 	if (user.telegramId == photographer.telegramId) {
 		bot.sendMessage(
 			photographer.telegramId,
-			`Пришлите скриншот подтверждающий возврат средств!${
-				stateController.getState(data.split(";")[2]).state
-			}`
+			`Пришлите скриншот подтверждающий возврат средств!`
 		);
 	} else {
 		bot.sendMessage(
 			photographer.telegramId,
-			`
-			Клиент хочет сделать отмену бронирования ${booking.date} ${booking.timeSlot}
-			Пришлите скриншот подтверждающий возврат средств!${
-				stateController.getState(data.split(";")[2]).state
-			}`
+			`Клиент хочет сделать отмену бронирования ${booking.date} ${booking.timeSlot}
+			Пришлите скриншот подтверждающий возврат средств!`
 		);
 	}
 }
