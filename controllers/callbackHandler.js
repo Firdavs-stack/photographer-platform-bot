@@ -208,6 +208,8 @@ async function handlePhotographerCallback(
 	}
 
 	switch (true) {
+		case data.startsWith("confirm_cancelling;"):
+			await confirmCancelling(bot, chatId, query, data, photographer);
 		case data.startsWith("confirm_payment;"):
 			await confirmPayment(bot, query, photographer);
 			break;
@@ -438,33 +440,58 @@ async function requestToCancelling(bot, chatId, query, data, user) {
 	const booking = await Booking.findById(bookingId);
 	const photographer = await Photographer.findById(booking.photographerId);
 
-	stateController.setState(chatId, {
-		state: "cancellingBooking",
-		bookingInfo: bookingId,
-	});
-
 	bot.sendMessage(chatId, `${user.telegramId == photographer.telegramId}`);
 	if (user.telegramId == photographer.telegramId) {
+		stateController.setState(chatId, {
+			state: "cancellingBooking",
+			bookingInfo: bookingId,
+		});
 		bot.sendMessage(
 			photographer.telegramId,
 			`Пришлите скриншот подтверждающий возврат средств!`
 		);
 	} else {
+		booking.status = "awaiting_screenshot";
+		await booking.save();
 		bot.sendMessage(
 			photographer.telegramId,
 			`Клиент хочет сделать отмену бронирования ${booking.date} ${booking.timeSlot}
-			Пришлите скриншот подтверждающий возврат средств!`
+			Пришлите скриншот подтверждающий возврат средств!`,
+			{
+				reply_markup: {
+					inline_keyboard: [
+						[
+							{
+								text: "✅ Подтвердить отмену",
+								callback_data: `confirm_cancelling;${booking._id}`,
+							},
+						],
+					],
+				},
+			}
 		);
 	}
 }
 
-async function confirmCancelling(bot, chatId, query, data, photographer) {
+async function confirmCancelling(bot, chatId, query, data, photographer = {}) {
 	const bookingId = data.split(";")[1];
-	const response = await axios.delete(
-		`https://api.two2one.uz/api/bookings/${bookingId}`
-	);
-	if (response) {
-		bot.sendMessage(chatId, "Бронирование успешно отменено");
+
+	if (photographer) {
+		stateController.setState(chatId, {
+			state: "cancellingBooking",
+			bookingInfo: bookingId,
+		});
+		bot.sendMessage(
+			photographer.telegramId,
+			`Пришлите скриншот подтверждающий возврат средств!`
+		);
+	} else {
+		const response = await axios.delete(
+			`https://api.two2one.uz/api/bookings/${bookingId}`
+		);
+		if (response) {
+			bot.sendMessage(chatId, "Бронирование успешно отменено");
+		}
 	}
 }
 

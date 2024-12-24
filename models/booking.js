@@ -24,6 +24,7 @@ const BookingSchema = new mongoose.Schema({
 			"cancelled",
 			"reschedule_requested",
 			"awaiting_cancelling_confirmation",
+			"awaiting_screenshot",
 		],
 		default: "awaiting_prepayment",
 	},
