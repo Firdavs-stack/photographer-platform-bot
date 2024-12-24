@@ -103,11 +103,11 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 	if (isDefaultCommand(data, clientDefaultCommands)) {
 		return; // Прерываем выполнение, если нажата одна из стандартных кнопок
 	}
-	bot.sendMessage(chatId, "hohoh");
 	// Обработка различных callback-запросов клиентов
 	if (data.startsWith("accept_reschedule_client;")) {
 		await acceptRescheduleClient(bot, chatId, data, client);
 	} else if (data.startsWith("cancel_booking;")) {
+		bot.sendMessage(chatId, "hohoh");
 		await requestToCancelling(bot, chatId, query, data, photographer);
 	} else if (data.startsWith("confirm_cancelling")) {
 		await confirmCancelling(bot, chatId, query, data);
