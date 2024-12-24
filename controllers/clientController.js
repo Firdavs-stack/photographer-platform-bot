@@ -187,6 +187,10 @@ async function handleClientMessage(bot, msg, client) {
 							text: "Перебронировать",
 							callback_data: `client_reschedule;${booking._id}`,
 						},
+						{
+							text: "Отменить",
+							callback_data: `cancel_booking;${booking._id};${chatId}`,
+						},
 					]);
 				}
 

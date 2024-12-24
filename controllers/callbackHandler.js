@@ -107,6 +107,8 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 	// Обработка различных callback-запросов клиентов
 	if (data.startsWith("accept_reschedule_client;")) {
 		await acceptRescheduleClient(bot, chatId, data, client);
+	} else if (data.startsWith("cancel_booking;")) {
+		await requestToCancelling(bot, chatId, query, data, photographer);
 	} else if (data.startsWith("confirm_cancelling")) {
 		await confirmCancelling(bot, chatId, query, data);
 	} else if (data.startsWith("decline_reschedule_client;")) {
@@ -436,18 +438,31 @@ async function requestToCancelling(bot, chatId, query, data, photographer) {
 	bot.sendMessage(chatId, "siu");
 	const bookingId = data.split(";")[1];
 
-	bot.sendMessage(chatId, `${bookingId} ${data}`);
-	stateController.setState(chatId, {
-		state: "cancellingBooking",
-		bookingInfo: bookingId,
-	});
-
-	bot.sendMessage(
-		chatId,
-		`Пришлите скриншот подтверждающий возврат средств!${
-			stateController.getState(chatId).state
-		}`
-	);
+	if (data.split(";")[2]) {
+		bot.sendMessage(data.split(";")[2], `${bookingId} ${data}`);
+		stateController.setState(chatId, {
+			state: "cancellingBooking",
+			bookingInfo: bookingId,
+		});
+		bot.sendMessage(
+			data.split(";")[2],
+			`Пришлите скриншот подтверждающий возврат средств!${
+				stateController.getState(data.split(";")[2]).state
+			}`
+		);
+	} else {
+		bot.sendMessage(chatId, `${bookingId} ${data}`);
+		stateController.setState(chatId, {
+			state: "cancellingBooking",
+			bookingInfo: bookingId,
+		});
+		bot.sendMessage(
+			chatId,
+			`Пришлите скриншот подтверждающий возврат средств!${
+				stateController.getState(chatId).state
+			}`
+		);
+	}
 }
 
 async function confirmCancelling(bot, chatId, query, data, photographer) {
