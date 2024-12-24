@@ -485,7 +485,7 @@ async function confirmCancelling(
 
 	const booking = await Booking.findById(bookingId);
 	const client = await Client.findById(booking.clientId);
-	if (photographer != {}) {
+	if (photographer) {
 		bot.sendMessage(client.telegramId, `${photographer.telegramId}`);
 		stateController.setState(chatId, {
 			state: "cancellingBooking",
