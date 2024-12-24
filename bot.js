@@ -153,7 +153,7 @@ bot.on("photo", async (msg) => {
 		telegramId: chatId.toString(),
 	});
 
-	bot.sendMessage(chatId, `SOOOSI ${client}`);
+	bot.sendMessage(chatId, `SOOOSI ${chatId}`);
 	// Проверка, является ли пользователь клиентом
 	if (client) {
 		// Обработка скриншота оплаты для клиентов
