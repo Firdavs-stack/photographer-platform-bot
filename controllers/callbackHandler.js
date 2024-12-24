@@ -107,8 +107,7 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 	if (data.startsWith("accept_reschedule_client;")) {
 		await acceptRescheduleClient(bot, chatId, data, client);
 	} else if (data.startsWith("cancel_booking;")) {
-		bot.sendMessage(chatId, "hohoh");
-		await requestToCancelling(bot, chatId, query, data, photographer);
+		await requestToCancelling(bot, chatId, query, data, client);
 	} else if (data.startsWith("confirm_cancelling")) {
 		await confirmCancelling(bot, chatId, query, data);
 	} else if (data.startsWith("decline_reschedule_client;")) {
@@ -434,35 +433,23 @@ async function handlePhotographerReschedule(bot, query, photographer) {
 	}
 }
 
-async function requestToCancelling(bot, chatId, query, data, photographer) {
+async function requestToCancelling(bot, chatId, query, data, user) {
 	bot.sendMessage(chatId, "siu");
 	const bookingId = data.split(";")[1];
-	bot.sendMessage(chatId, data.split(";")[2]);
-	if (data.split(";")[2]) {
-		bot.sendMessage(data.split(";")[2], `${bookingId} ${data}`);
-		stateController.setState(chatId, {
-			state: "cancellingBooking",
-			bookingInfo: bookingId,
-		});
-		bot.sendMessage(
-			data.split(";")[2],
-			`Пришлите скриншот подтверждающий возврат средств!${
-				stateController.getState(data.split(";")[2]).state
-			}`
-		);
-	} else {
-		bot.sendMessage(chatId, `${bookingId} ${data}`);
-		stateController.setState(chatId, {
-			state: "cancellingBooking",
-			bookingInfo: bookingId,
-		});
-		bot.sendMessage(
-			chatId,
-			`Пришлите скриншот подтверждающий возврат средств!${
-				stateController.getState(chatId).state
-			}`
-		);
-	}
+	const booking = await Booking.findById(bookingId);
+
+	bot.sendMessage(chatId, booking.photographerId);
+	bot.sendMessage(booking.photographerId, `${bookingId} ${data}`);
+	stateController.setState(chatId, {
+		state: "cancellingBooking",
+		bookingInfo: bookingId,
+	});
+	bot.sendMessage(
+		booking.photographerId,
+		`Пришлите скриншот подтверждающий возврат средств!${
+			stateController.getState(data.split(";")[2]).state
+		}`
+	);
 }
 
 async function confirmCancelling(bot, chatId, query, data, photographer) {
