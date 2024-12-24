@@ -437,15 +437,19 @@ async function requestToCancelling(bot, chatId, query, data, user) {
 	bot.sendMessage(chatId, "siu");
 	const bookingId = data.split(";")[1];
 	const booking = await Booking.findById(bookingId);
+	const photographer = await Photographer.findById(booking.photographerId);
 
-	bot.sendMessage(chatId, `${booking.photographerId}`);
-	bot.sendMessage(booking.photographerId, `${bookingId} ${data}`);
+	bot.sendMessage(chatId, `${photographer.telegramId}`);
+	bot.sendMessage(
+		photographer.telegramId,
+		`${photographer.telegramId} ${data}`
+	);
 	stateController.setState(chatId, {
 		state: "cancellingBooking",
 		bookingInfo: bookingId,
 	});
 	bot.sendMessage(
-		booking.photographerId,
+		photographer.telegramId,
 		`Пришлите скриншот подтверждающий возврат средств!${
 			stateController.getState(data.split(";")[2]).state
 		}`
