@@ -474,7 +474,13 @@ async function requestToCancelling(bot, chatId, query, data, user) {
 	}
 }
 
-async function confirmCancelling(bot, chatId, query, data, photographer = {}) {
+async function confirmCancelling(
+	bot,
+	chatId,
+	query,
+	data,
+	photographer = null
+) {
 	const bookingId = data.split(";")[1];
 
 	const booking = await Booking.findById(bookingId);
