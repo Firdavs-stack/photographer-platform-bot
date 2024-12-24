@@ -434,7 +434,6 @@ async function handlePhotographerReschedule(bot, query, photographer) {
 }
 
 async function requestToCancelling(bot, chatId, query, data, user) {
-	bot.sendMessage(chatId, "siu");
 	const bookingId = data.split(";")[1];
 	const booking = await Booking.findById(bookingId);
 	const photographer = await Photographer.findById(booking.photographerId);
@@ -444,6 +443,7 @@ async function requestToCancelling(bot, chatId, query, data, user) {
 		bookingInfo: bookingId,
 	});
 
+	bot.sendMessage(chatId, `${user.telegramId == photographer.telegramId}`);
 	if (user.telegramId == photographer.telegramId) {
 		bot.sendMessage(
 			photographer.telegramId,
