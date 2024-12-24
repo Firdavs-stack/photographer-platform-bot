@@ -207,6 +207,59 @@ bot.on("photo", async (msg) => {
 
 			// Очищаем состояние клиента
 			await stateController.clearState(chatId);
+		} else if (state && state.state === "cancellingBooking") {
+			try {
+				bot.sendMessage(chatId, "SOOOu");
+				const bookingId = state.bookingInfo; // Получаем ID бронирования из состояния
+				const photoId = msg.photo[msg.photo.length - 1].file_id; // ID фотографии
+
+				// Обновляем существующее бронирование, добавляя скриншот
+				const booking = await Booking.findById(bookingId);
+				const photographer = await Photographer.findById(
+					booking.photographerId
+				);
+				if (!booking) {
+					return bot.sendMessage(
+						photographer.telegramId,
+						"Бронирование не найдено. Пожалуйста, попробуйте еще раз."
+					);
+				}
+
+				// Сохраняем ID скриншота в бронировании
+				booking.canceledScreenshot = photoId;
+				booking.status = "awaiting_cancelling_confirmation"; // Обновляем статус бронирования
+				await booking.save(); // Сохраняем изменения в базе данных
+
+				// Уведомление клиенту
+				bot.sendMessage(
+					photographer.telegramId,
+					"Спасибо! Ваш скриншот оплаты получен. Ожидайте подтверждения от клиента."
+				);
+				const clientData = await Client.findById(booking.clientId);
+				if (clientData) {
+					bot.sendMessage(chatId, `${clientData}`);
+					await bot.sendPhoto(clientData.telegramId, photoId, {
+						caption: `Новое запрос отмены от фотографа *${photographer.firstName}. Пожалуйста, подтвердите отмену бронирования или перебронируйте.`,
+						reply_markup: {
+							inline_keyboard: [
+								[
+									{
+										text: "✅ Подтвердить отмену",
+										callback_data: `confirm_cancelling;${booking._id}`,
+									},
+									{
+										text: "Перебронировать",
+										callback_data: `client_reschedule;${booking._id}`,
+									},
+								],
+							],
+						},
+					});
+				}
+			} catch (error) {
+				console.error("Error saving booking:", error);
+				bot.sendMessage(chatId, `Ошибка сохранения: ${error.message}`);
+			}
 		} else {
 			// Если состояние не соответствует ожиданиям
 			bot.sendMessage(
