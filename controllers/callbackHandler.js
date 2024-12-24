@@ -210,6 +210,7 @@ async function handlePhotographerCallback(
 	switch (true) {
 		case data.startsWith("confirm_cancelling;"):
 			await confirmCancelling(bot, chatId, query, data, photographer);
+			break;
 		case data.startsWith("confirm_payment;"):
 			await confirmPayment(bot, query, photographer);
 			break;
