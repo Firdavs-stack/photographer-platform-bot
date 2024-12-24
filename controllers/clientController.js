@@ -189,7 +189,7 @@ async function handleClientMessage(bot, msg, client) {
 						},
 						{
 							text: "Отменить",
-							callback_data: `cancel_booking;${booking._id};${chatId}`,
+							callback_data: `cancel_booking;${booking._id}`,
 						},
 					]);
 				}
