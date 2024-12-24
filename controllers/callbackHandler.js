@@ -500,6 +500,13 @@ async function confirmCancelling(
 			`https://api.two2one.uz/api/bookings/${bookingId}`
 		);
 		if (response) {
+			const photographer = await Photographer.findById(
+				booking.photographerId
+			);
+			bot.sendMessage(
+				photographer.telegramId,
+				`Бронирование ${client.name} на ${booking.date} в ${booking.timeSlot} отменено`
+			);
 			bot.sendMessage(chatId, "Бронирование успешно отменено");
 		}
 	}
