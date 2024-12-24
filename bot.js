@@ -155,6 +155,7 @@ bot.on("photo", async (msg) => {
 
 	// Проверка, является ли пользователь клиентом
 	if (client) {
+		bot.sendMessage(chatId, "SOOOSI");
 		// Обработка скриншота оплаты для клиентов
 		if (state && state.state === "awaiting_payment") {
 			const bookingId = state.bookingInfo._id; // Получаем ID бронирования из состояния
