@@ -1,5 +1,4 @@
 // controllers/photographerController.js
-
 const path = require("path");
 const Photographer = require("../models/Photographer");
 const Booking = require("../models/booking");
@@ -7,6 +6,7 @@ const Client = require("../models/client");
 const stateController = require("./stateController");
 const axios = require("axios");
 const fs = require("fs");
+const { calendar } = require("../bot");
 
 const sourceDir = path.resolve(__dirname, "../../..");
 // Определяем команды по умолчанию для фотографов
@@ -390,6 +390,8 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 		chatId,
 		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
+
+	calendar.startNavCalendar({ message: { chat: { id: chatId } } });
 }
 async function checkTheBookingDate(bot, text, chatId, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
