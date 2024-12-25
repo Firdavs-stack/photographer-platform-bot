@@ -106,6 +106,7 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 	// Обработка различных callback-запросов клиентов
 	if (data.startsWith("accept_reschedule_client;")) {
 		await acceptRescheduleClient(bot, chatId, data, client);
+	} else if (data.startsWith("n_")) {
 	} else if (data.startsWith("cancel_booking;")) {
 		await requestToCancelling(bot, chatId, query, data, client);
 	} else if (data.startsWith("confirm_cancelling")) {
@@ -129,7 +130,7 @@ async function handleClientCallback(bot, chatId, query, data, client) {
 	} else {
 		bot.sendMessage(
 			chatId,
-			"Неизвестная команда. Пожалуйста, используйте доступные команды."
+			`Неизвестная команда. Пожалуйста, используйте доступные команды.${data}`
 		);
 	}
 }
@@ -256,7 +257,8 @@ async function handlePhotographerCallback(
 		case data.startsWith("edit_photo_"):
 			await editPhotoInfo(bot, query, photographer);
 			break;
-
+		case data.startsWith("n_"):
+			break;
 		case data.startsWith("vip_client_"):
 			// Извлекаем clientId из callback_data
 			const clientId = data.split("_")[2];
@@ -330,7 +332,7 @@ async function handlePhotographerCallback(
 		default:
 			bot.sendMessage(
 				chatId,
-				"Неизвестная команда. Пожалуйста, используйте доступные команды."
+				`Неизвестная команда. Пожалуйста, используйте доступные команды.${data}`
 			);
 			break;
 	}

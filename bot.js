@@ -3,8 +3,6 @@ const TOKEN =
 	"7647751844:AAGSToi5DCbuRGAA156G52obCl3FLHBn5j4";
 
 const TelegramBot = require("node-telegram-bot-api");
-const Calendar = require("telegram-inline-calendar");
-process.env.NTBA_FIX_319 = 1;
 const mongoose = require("mongoose");
 const clientController = require("./controllers/clientController");
 const photographerController = require("./controllers/photographerController");
@@ -17,11 +15,6 @@ const Booking = require("./models/booking");
 // Инициализация бота
 const bot = new TelegramBot(TOKEN, {
 	polling: true,
-});
-
-const calendar = new Calendar(bot, {
-	date_format: "YYYY-MM-DD",
-	language: "ru",
 });
 
 // Подключение к базе данных
@@ -461,4 +454,4 @@ bot.on("callback_query", (query) => {
 	callbackHandler.handleCallbackQuery(bot, query);
 });
 
-module.exports = { bot, calendar };
+module.exports = bot;

@@ -6,7 +6,6 @@ const Client = require("../models/client");
 const stateController = require("./stateController");
 const axios = require("axios");
 const fs = require("fs");
-const { calendar } = require("../bot");
 
 const sourceDir = path.resolve(__dirname, "../../..");
 // Определяем команды по умолчанию для фотографов
@@ -158,9 +157,14 @@ async function viewPortfolio(bot, chatId, photographer) {
 }
 
 // Функция для обработки сообщений фотографа
-async function handlePhotographerMessage(bot, msg, photographer) {
+async function handlePhotographerMessage(
+	bot,
+	msg,
+	photographer,
+	selectDateMsg = null
+) {
 	const chatId = msg.chat.id;
-	const text = msg.text.trim();
+	const text = selectDateMsg ? selectDateMsg : msg.text.trim();
 	let state = await stateController.getState(chatId);
 	console.log(chatId);
 	if (isDefaultCommand(text, photographerDefaultCommands) && state) {
@@ -351,7 +355,7 @@ async function handlePhotographerMessage(bot, msg, photographer) {
 			break;
 
 		case "📅 Бронирования":
-			await showPhotographerBookings(bot, chatId, photographer);
+			await showPhotographerBookings(bot, chatId, photographer, msg);
 			break;
 
 		case "🕒 Выбрать временные промежутки":
@@ -382,70 +386,44 @@ async function searchClients(bot, chatId, photographer) {
 	);
 }
 
-async function showPhotographerBookings(bot, chatId, photographer) {
+async function showPhotographerBookings(bot, chatId, photographer, msg) {
+	const Calendar = require("telegram-inline-calendar");
+	process.env.NTBA_FIX_319 = 1;
+	const calendar = new Calendar(bot, {
+		date_format: "YYYY-MM-DD",
+		language: "ru",
+	});
+	bot.on("callback_query", (query) => {
+		if (
+			query.message.message_id ==
+			calendar.chats.get(query.message.chat.id)
+		) {
+			res = calendar.clickButtonCalendar(query);
+			if (res !== -1) {
+				handlePhotographerMessage(
+					bot,
+					query.message,
+					photographer,
+					res
+				);
+				bot.sendMessage(query.message.chat.id, `${res}`);
+				calendar.startNavCalendar({ chat: { id: chatId } });
+			}
+		}
+	});
 	await stateController.setState(chatId, {
 		state: "awaiting_bookings_date",
 	});
-	bot.sendMessage(
+	await bot.sendMessage(
 		chatId,
-		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
+		"Выберите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
-	bot.sendMessage(chatId, `${calendar}`);
+	calendar.startNavCalendar(msg);
 }
-async function checkTheBookingDate(bot, text, chatId, photographer) {
-	if (isDefaultCommand(text, photographerDefaultCommands)) {
-		return;
-	}
-
-	let dateText;
-
-	// Если введено "сегодня", используем текущую дату
-	if (text.toLowerCase() === "сегодня") {
-		dateText = new Date().toISOString().slice(0, 10);
-
-		// Вернем обычное меню после выбора "сегодня"
-		await bot.sendMessage(chatId, 'Вы выбрали "сегодня"', {
-			reply_markup: {
-				keyboard: [
-					[{ text: "📸 Добавить портфолио" }],
-					[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
-					[{ text: "🕒 Выбрать временные промежутки" }],
-					[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
-					[{ text: "🔍 Поиск клиентов" }], // Добавлена кнопка для поиска клиентов
-				],
-				resize_keyboard: true,
-				one_time_keyboard: false,
-			},
-		});
-	} else {
-		dateText = text;
-		await bot.sendMessage(chatId, `Вы выбрали ${dateText}`, {
-			reply_markup: {
-				keyboard: [
-					[{ text: "📸 Добавить портфолио" }],
-					[{ text: "📅 Бронирования" }, { text: "⚙️ Настройки" }],
-					[{ text: "🕒 Выбрать временные промежутки" }],
-					[{ text: "💳 Реквизиты" }, { text: "🎟 Ссылка" }],
-					[{ text: "🔍 Поиск клиентов" }], // Добавлена кнопка для поиска клиентов
-				],
-				resize_keyboard: true,
-				one_time_keyboard: false,
-			},
-		});
-	}
-
-	// Проверяем формат даты
-	if (!/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
-		await bot.sendMessage(
-			chatId,
-			'Пожалуйста, введите дату в формате YYYY-MM-DD или напишите "сегодня".'
-		);
-		return;
-	}
-
+async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 	// Проверяем расписание фотографа на указанную дату
 	const existingSchedule = photographer.schedule.find(
-		(s) => s.date.toISOString().slice(0, 10) === dateText
+		(s) => s.date.toISOString().slice(0, 10) === selectedDate
 	);
 	const selectedSlots = existingSchedule
 		? existingSchedule.availableSlots.map((slot) =>
@@ -456,7 +434,7 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 	// Генерируем клавиатуру с временными промежутками
 	const keyboard = await generateTimeSlotsKeyboard(
 		"",
-		dateText,
+		selectedDate,
 		selectedSlots,
 		[],
 		""
@@ -465,14 +443,14 @@ async function checkTheBookingDate(bot, text, chatId, photographer) {
 	// Сохраняем состояние пользователя
 	await stateController.setState(chatId, {
 		state: "selecting_time_slots",
-		date: dateText,
+		date: selectedDate,
 		selectedHours: selectedSlots,
 	});
 
-	// Отправляем сообщение с клавиатурой
+	// Отправляем сообщение с клавиатурой таймслотов
 	await bot.sendMessage(
 		chatId,
-		`Выберите доступные временные промежутки для даты ${dateText}:`,
+		`Вы выбрали дату ${selectedDate}. Выберите доступные временные промежутки:`,
 		{
 			reply_markup: { inline_keyboard: keyboard },
 		}
@@ -649,19 +627,27 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 		selectedHours: [], // Инициализация пустого массива для выбранных промежутков
 	});
 
-	bot.sendMessage(
-		chatId,
-		'Введите дату в формате YYYY-MM-DD или напишите "сегодня":',
-		{
-			reply_markup: {
-				keyboard: [
-					[{ text: "сегодня" }], // Кнопка, отправляющая текст "Сегодня"
-				],
-				resize_keyboard: true, // Уменьшение размера кнопки
-				one_time_keyboard: false, // Кнопка остаётся на экране
-			},
+	// Подключаем календарь
+	const Calendar = require("telegram-inline-calendar");
+	process.env.NTBA_FIX_319 = 1;
+
+	const calendar = new Calendar(bot, {
+		date_format: "YYYY-MM-DD",
+		language: "ru",
+	});
+
+	// Отправляем календарь для выбора даты
+	await calendar.startNavCalendar({ chat: { id: chatId } });
+
+	// Обработка выбора даты
+	bot.on("callback_query", async (query) => {
+		const selectedDate = calendar.clickButtonCalendar(query);
+
+		// Если выбрана корректная дата
+		if (selectedDate !== -1) {
+			await checkTheBookingDate(bot, selectedDate, chatId, photographer);
 		}
-	);
+	});
 }
 
 async function startPortfolioPhotoUpload(bot, chatId, query) {
