@@ -390,8 +390,7 @@ async function showPhotographerBookings(bot, chatId, photographer) {
 		chatId,
 		"Введите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
 	);
-
-	calendar.startNavCalendar({ message: { chat: { id: chatId } } });
+	bot.sendMessage(chatId, `${calendar}`);
 }
 async function checkTheBookingDate(bot, text, chatId, photographer) {
 	if (isDefaultCommand(text, photographerDefaultCommands)) {
