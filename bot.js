@@ -35,6 +35,7 @@ mongoose.connect(
 
 // Регистрация обработчиков для клиентов и фотографов
 bot.on("message", async (msg) => {
+	bot.sendMessage(chatId, calendar);
 	const chatId = msg.chat.id;
 	const client = await clientController.getClientByTelegramId(chatId);
 	const state = await stateController.getState(chatId);
