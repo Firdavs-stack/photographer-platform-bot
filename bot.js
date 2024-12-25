@@ -13,14 +13,15 @@ const stateController = require("./controllers/stateController");
 const Client = require("./models/client");
 const Photographer = require("./models/Photographer");
 const Booking = require("./models/booking");
-const calendar = new Calendar(bot, {
-	date_format: "YYYY-MM-DD",
-	language: "ru",
-});
 
 // Инициализация бота
 const bot = new TelegramBot(TOKEN, {
 	polling: true,
+});
+
+const calendar = new Calendar(bot, {
+	date_format: "YYYY-MM-DD",
+	language: "ru",
 });
 
 // Подключение к базе данных
