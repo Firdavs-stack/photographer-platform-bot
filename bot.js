@@ -346,7 +346,6 @@ async function addPortfolioPhoto(state, photoId, chatId) {
 
 // Обработка команды /start с возможностью пригласительных ссылок
 bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
-	bot.sendMessage(chatId, `${calendar}`);
 	const chatId = msg.chat.id;
 	const inviteData = match[1]; // Получаем ссылку, если она есть
 
