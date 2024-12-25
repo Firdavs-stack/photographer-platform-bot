@@ -451,7 +451,7 @@ async function requestToCancelling(bot, chatId, query, data, user) {
 			photographer.telegramId,
 			`Пришлите скриншот подтверждающий возврат средств!`
 		);
-	} else {
+	} else if (booking.status != "awaiting_prepayment") {
 		booking.status = "awaiting_screenshot";
 		await booking.save();
 		bot.sendMessage(
@@ -470,6 +470,15 @@ async function requestToCancelling(bot, chatId, query, data, user) {
 					],
 				},
 			}
+		);
+	} else {
+		const response = await axios.delete(
+			`https://api.two2one.uz/api/bookings/${bookingId}`
+		);
+
+		bot.sendMessage(
+			chatId,
+			`Бронирование ${photographer.firstName} на ${booking.date} отменено`
 		);
 	}
 }
