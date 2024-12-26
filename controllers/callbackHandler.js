@@ -166,6 +166,44 @@ async function acceptRescheduleClient(bot, chatId, data, client) {
 	bot.sendMessage(chatId, "Вы приняли запрос на перебронирование.");
 }
 
+async function initiateClientReschedule(bot, chatId, data, client) {
+	// Данные для перебронирования
+	const bookingId = data.split(";")[1]; // Получаем ID бронирования из callback_data
+	const booking = await Booking.findById(bookingId); // Получаем данные бронирования
+	const photographer = await Photographer.findById(booking.photographerId); // Получаем информацию о фотографе
+
+	if (!photographer) {
+		await bot.sendMessage(
+			chatId,
+			"Не удалось найти информацию о фотографе."
+		);
+		return;
+	}
+
+	// Проверяем, есть ли номер телефона у фотографа
+	const photographerPhone = photographer.phoneNumber || "Неизвестно";
+
+	// Информация для клиента о том, что нужно поговорить с фотографом
+	const message = `
+        Для перебронирования бронирования, пожалуйста, свяжитесь с вашим фотографом.
+        
+        **Информация о фотографе:**
+        Имя: ${photographer.firstName || "Неизвестно"}
+        Номер телефона: ${photographerPhone}
+
+        Пожалуйста, обсудите с фотографом возможные новые даты и время
+    `;
+
+	// Отправляем сообщение клиенту
+	await bot.sendMessage(chatId, message);
+
+	// Вы можете также вернуть информацию о фотографе, если необходимо для дальнейших шагов
+	return {
+		photographerName: photographer.name || "Неизвестно",
+		photographerPhone: photographerPhone,
+	};
+}
+
 // Отклонить запрос на перебронирование от фотографа
 async function declineRescheduleClient(bot, chatId, data, client) {
 	if (isDefaultCommand(data, clientDefaultCommands)) {
@@ -348,10 +386,7 @@ async function initiatePhotographerReschedule(bot, chatId, photographerId) {
 		!photographer.schedule ||
 		photographer.schedule.length === 0
 	) {
-		bot.sendMessage(
-			chatId,
-			"У вас нет доступных дат для перебронирования."
-		);
+		bot.sendMessage(chatId, "У фотографа нет доступных дат.");
 		return;
 	}
 
@@ -360,126 +395,24 @@ async function initiatePhotographerReschedule(bot, chatId, photographerId) {
 		s.date.toISOString().slice(0, 10)
 	);
 
+	// Проверяем, есть ли доступные даты
 	if (availableDates.length === 0) {
-		bot.sendMessage(chatId, "Нет доступных дат для перебронирования.");
+		bot.sendMessage(
+			chatId,
+			"У фотографа нет доступных дат для перебронирования."
+		);
 		return;
 	}
 
-	// Сохраняем состояние, чтобы отслеживать выбор даты
-	await stateController.setState(chatId, {
-		state: "photographer_rescheduling_date",
-		selectedBooking: null, // Указать текущую бронировку для изменения
-	});
+	// Отправляем пользователю кнопки для выбора даты
+	const dateButtons = availableDates.map((date) => [
+		{ text: date, callback_data: `photographer_reschedule_date_${date}` },
+	]);
 
-	// Отправляем календарь для выбора даты
-	const calendar = new Calendar(bot, {
-		date_format: "YYYY-MM-DD",
-		language: "ru",
-	});
-
-	bot.sendMessage(chatId, "Выберите новую дату для перебронирования:");
-	calendar.startNavCalendar({ chat: { id: chatId } });
-
-	bot.on("callback_query", async (query) => {
-		const selectedDate = calendar.clickButtonCalendar(query);
-
-		if (selectedDate !== -1) {
-			// Получаем доступные слоты на выбранную дату
-			const existingSchedule = photographer.schedule.find(
-				(s) => s.date.toISOString().slice(0, 10) === selectedDate
-			);
-
-			const availableSlots = existingSchedule
-				? existingSchedule.availableSlots
-				: [];
-
-			if (availableSlots.length === 0) {
-				await bot.sendMessage(
-					chatId,
-					"На выбранную дату нет доступных слотов."
-				);
-				return;
-			}
-
-			// Отправляем слоты для выбора
-			const timeKeyboard = await generateTimeSlotsKeyboard(
-				"",
-				selectedDate,
-				availableSlots.map((slot) => parseInt(slot.split(":")[0])),
-				[],
-				"photographer_reschedule_time"
-			);
-
-			await bot.sendMessage(
-				chatId,
-				`Вы выбрали дату: ${selectedDate}. Теперь выберите время:`,
-				{
-					reply_markup: { inline_keyboard: timeKeyboard },
-				}
-			);
-
-			// Обработчик выбора времени
-			bot.on("callback_query", async (timeQuery) => {
-				const selectedTime = timeQuery.data.replace(
-					"photographer_reschedule_time_",
-					""
-				);
-
-				// Уведомляем клиента о предложении
-				const booking = await Booking.findOne({
-					photographerId,
-					status: "confirmed", // Текущее бронирование
-				});
-
-				if (!booking) {
-					await bot.sendMessage(
-						chatId,
-						"Не удалось найти бронирование для изменения."
-					);
-					return;
-				}
-
-				await bot.sendMessage(
-					booking.clientId,
-					`Фотограф предложил перенести бронирование на ${selectedDate} в ${selectedTime}. Вы согласны?`,
-					{
-						reply_markup: {
-							inline_keyboard: [
-								[
-									{
-										text: "✅ Принять",
-										callback_data: "accept_reschedule",
-									},
-								],
-								[
-									{
-										text: "✏️ Предложить другое время",
-										callback_data: "modify_reschedule",
-									},
-								],
-								[
-									{
-										text: "❌ Отклонить",
-										callback_data: "decline_reschedule",
-									},
-								],
-							],
-						},
-					}
-				);
-
-				// Сохраняем новое предложение в бронировании
-				booking.status = "pending_reschedule";
-				booking.proposedDate = selectedDate;
-				booking.proposedTime = selectedTime;
-				await booking.save();
-
-				await bot.sendMessage(
-					chatId,
-					`Вы предложили клиенту перенести бронирование на ${selectedDate} в ${selectedTime}.`
-				);
-			});
-		}
+	bot.sendMessage(chatId, "Выберите новую дату для перебронирования:", {
+		reply_markup: {
+			inline_keyboard: dateButtons,
+		},
 	});
 }
 
@@ -948,6 +881,8 @@ async function rescheduleTimeSelectionDone(
 			photographerId: photographer._id,
 			date: originalDate, // Преобразуем дату в правильный формат// Учитываем только подтвержденные бронирования
 		});
+		const oldTimeSlot = existingBooking.timeSlot;
+		const client = await Client.findById(existingBooking.clientId);
 
 		if (existingBooking) {
 			// Обновляем временной интервал бронирования
@@ -960,6 +895,10 @@ async function rescheduleTimeSelectionDone(
 			await bot.sendMessage(
 				chatId,
 				`Ваше время бронирования было успешно изменено на: ${newTimeRange}`
+			);
+			await bot.sendMessage(
+				client.telegramId,
+				`${photographer.firstName} перенес(-ла) бронирование с ${originalDate} в ${oldTimeSlot} на ${date} в ${newTimeRange}`
 			);
 		} else {
 			await bot.sendMessage(

@@ -6,6 +6,7 @@ const Client = require("../models/client");
 const stateController = require("./stateController");
 const axios = require("axios");
 const fs = require("fs");
+const Calendar = require("telegram-inline-calendar");
 
 const sourceDir = path.resolve(__dirname, "../../..");
 // Определяем команды по умолчанию для фотографов
@@ -414,10 +415,6 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 	await stateController.setState(chatId, {
 		state: "awaiting_bookings_date",
 	});
-	await bot.sendMessage(
-		chatId,
-		"Выберите дату, на которую вы хотите увидеть бронирования (в формате YYYY-MM-DD):"
-	);
 	calendar.startNavCalendar(msg);
 }
 async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
@@ -528,6 +525,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 		photographerId: photographer._id,
 		date: requestedDate,
 	});
+	const client = await Client.findById(bookings[0]?.clientId);
 
 	if (bookings.length === 0) {
 		bot.sendMessage(chatId, "На выбранную дату бронирований нет.");
@@ -537,6 +535,7 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 Дата: ${new Date(booking.date).toISOString().slice(0, 10)}
 Время: ${booking.timeSlot}
 Статус: ${booking.status}
+Номер телефона: ${client.phone}
 `;
 
 			const buttons = [];
@@ -579,11 +578,11 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 					},
 				]);
 			}
+
 			const bookingDate = new Date(booking.date); // Дата бронирования
 			const [startTime, endTime] = booking.timeSlot.split("-"); // Разделяем интервал времени
 
 			// Преобразуем startTime и endTime в полные объекты Date
-			// const startDateTime = new Date(`${booking.date}T${startTime}:00`);
 			const endDateTime = new Date(`${booking.date}T${endTime}:00`);
 			if (currentDate >= endDateTime && booking.status == "confirmed") {
 				buttons.push([
@@ -607,8 +606,11 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 			}
 		}
 	}
-}
 
+	await stateController.setState(chatId, {
+		state: "awaiting_bookings_date",
+	});
+}
 async function choosePhotographerTimeSlots(bot, chatId) {
 	// Проверяем, является ли пользователь фотографом
 	const photographer = await Photographer.findOne({
