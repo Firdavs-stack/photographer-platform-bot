@@ -428,7 +428,7 @@ async function initiatePhotographerReschedule(bot, chatId, photographerId) {
 async function handlePhotographerReschedule(bot, query, photographer) {
 	const chatId = query.message.chat.id;
 	// Сохраняем выбранную дату
-	const date = query.data.split("_")[3];
+	const date = query.data.split("_")[5];
 
 	let state = await stateController.getState(chatId);
 
@@ -451,6 +451,8 @@ async function handlePhotographerReschedule(bot, query, photographer) {
 		...state,
 		state: "awaiting_rechedule_date",
 		date: date,
+		originalDate: query.data.split("_")[3],
+		oldTimeSlot: query.data.split("_")[4],
 	});
 
 	bot.sendMessage(chatId, "Выберите время для перебронирования:", {
@@ -873,9 +875,10 @@ async function rescheduleTimeSelectionDone(
 		return;
 	}
 
-	const originalTimeslots = stateController.getState(chatId).selectedHours;
+	const originalTimeslots = stateController.getState(chatId).oldTimeSlot;
 	const date = stateController.getState(chatId).date;
 	const selectedHours = state.selectedHours.sort((a, b) => a - b);
+	const originalDate = stateController.getState(chatId).originalDate;
 
 	// Создаем диапазон времени для нового бронирования
 	const startHour = selectedHours[0];
