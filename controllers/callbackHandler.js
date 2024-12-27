@@ -275,7 +275,12 @@ async function handlePhotographerCallback(
 			await rejectPayment(bot, query, photographer);
 			break;
 		case data.startsWith("photographer_reschedule;"):
-			await initiatePhotographerReschedule(bot, chatId, photographer);
+			await initiatePhotographerReschedule(
+				bot,
+				query,
+				chatId,
+				photographer
+			);
 			break;
 		case data.startsWith("photographer_reschedule_date_"):
 			await handlePhotographerReschedule(bot, query, photographer);
@@ -380,7 +385,8 @@ async function handlePhotographerCallback(
 async function initiatePhotographerReschedule(bot, chatId, photographerId) {
 	// Получаем расписание фотографа
 	const photographer = await Photographer.findById(photographerId);
-
+	const bookingId = query.data.split(";")[1];
+	const booking = await Booking.findById(bookingId);
 	if (
 		!photographer ||
 		!photographer.schedule ||
@@ -406,7 +412,10 @@ async function initiatePhotographerReschedule(bot, chatId, photographerId) {
 
 	// Отправляем пользователю кнопки для выбора даты
 	const dateButtons = availableDates.map((date) => [
-		{ text: date, callback_data: `photographer_reschedule_date_${date}` },
+		{
+			text: date,
+			callback_data: `photographer_reschedule_date_${booking.date}_${booking.timeSlot}_${date}`,
+		},
 	]);
 
 	bot.sendMessage(chatId, "Выберите новую дату для перебронирования:", {
@@ -864,7 +873,7 @@ async function rescheduleTimeSelectionDone(
 		return;
 	}
 
-	const originalDate = stateController.getState(chatId).originalDate;
+	const originalTimeslots = stateController.getState(chatId).selectedHours;
 	const date = stateController.getState(chatId).date;
 	const selectedHours = state.selectedHours.sort((a, b) => a - b);
 
