@@ -275,6 +275,7 @@ async function handlePhotographerCallback(
 			await rejectPayment(bot, query, photographer);
 			break;
 		case data.startsWith("photographer_reschedule;"):
+			bot.sendMessage(chatId, "siiu");
 			await initiatePhotographerReschedule(
 				bot,
 				query,
