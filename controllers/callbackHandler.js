@@ -901,7 +901,7 @@ async function rescheduleTimeSelectionDone(
 		const oldTimeSlot = existingBooking.timeSlot;
 		const client = await Client.findById(existingBooking.clientId);
 
-		bot.sendMessage(chatId, `${existingBooking}`);
+		bot.sendMessage(chatId, `${originalDate}`);
 		if (!client) {
 			console.error("Client not found for ID:", existingBooking.clientId);
 			await bot.sendMessage(
