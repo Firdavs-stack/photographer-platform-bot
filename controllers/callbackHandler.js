@@ -384,6 +384,7 @@ async function handlePhotographerCallback(
 // Функция для запуска процесса перебронирования
 async function initiatePhotographerReschedule(bot, chatId, photographerId) {
 	// Получаем расписание фотографа
+	bot.sendMessage(chatId, `${query.data.split(";")}`);
 	const photographer = await Photographer.findById(photographerId);
 	const bookingId = query.data.split(";")[1];
 	const booking = await Booking.findById(bookingId);
