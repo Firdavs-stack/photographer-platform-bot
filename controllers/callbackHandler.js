@@ -275,7 +275,6 @@ async function handlePhotographerCallback(
 			await rejectPayment(bot, query, photographer);
 			break;
 		case data.startsWith("photographer_reschedule;"):
-			bot.sendMessage(chatId, "siiu");
 			await initiatePhotographerReschedule(
 				bot,
 				query,
@@ -383,7 +382,12 @@ async function handlePhotographerCallback(
 }
 
 // Функция для запуска процесса перебронирования
-async function initiatePhotographerReschedule(bot, chatId, photographerId) {
+async function initiatePhotographerReschedule(
+	bot,
+	query,
+	chatId,
+	photographerId
+) {
 	// Получаем расписание фотографа
 	bot.sendMessage(chatId, `${query.data.split(";")}`);
 	const photographer = await Photographer.findById(photographerId);
