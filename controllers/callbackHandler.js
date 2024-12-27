@@ -910,7 +910,7 @@ async function rescheduleTimeSelectionDone(
 		console.error("Error during rescheduling:", error);
 		await bot.sendMessage(
 			chatId,
-			"Произошла ошибка при изменении времени бронирования."
+			`Произошла ошибка при изменении времени бронирования. ${error}`
 		);
 	}
 }
