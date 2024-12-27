@@ -876,36 +876,55 @@ async function rescheduleTimeSelectionDone(
 		.padStart(2, "0")}:00`;
 
 	try {
+		// Debugging logs
+		console.log("Query parameters:", {
+			photographerId: photographer._id,
+			originalDate,
+		});
+
 		// Ищем существующее бронирование для этого фотографа и даты
 		const existingBooking = await Booking.findOne({
 			photographerId: photographer._id,
-			date: originalDate, // Преобразуем дату в правильный формат// Учитываем только подтвержденные бронирования
+			date: originalDate,
 		});
-		const oldTimeSlot = existingBooking.timeSlot;
-		const client = await Client.findById(existingBooking.clientId);
 
-		if (existingBooking) {
-			// Обновляем временной интервал бронирования
-			existingBooking.timeSlot = newTimeRange;
-			if (existingBooking.date != date) {
-				existingBooking.date = date;
-			}
-			await existingBooking.save();
+		console.log("Existing booking found:", existingBooking);
 
-			await bot.sendMessage(
-				chatId,
-				`Ваше время бронирования было успешно изменено на: ${newTimeRange}`
-			);
-			await bot.sendMessage(
-				client.telegramId,
-				`${photographer.firstName} перенес(-ла) бронирование с ${originalDate} в ${oldTimeSlot} на ${date} в ${newTimeRange}`
-			);
-		} else {
+		if (!existingBooking) {
 			await bot.sendMessage(
 				chatId,
 				"Не удалось найти существующее бронирование для изменения."
 			);
+			return;
 		}
+
+		const oldTimeSlot = existingBooking.timeSlot;
+		const client = await Client.findById(existingBooking.clientId);
+
+		if (!client) {
+			console.error("Client not found for ID:", existingBooking.clientId);
+			await bot.sendMessage(
+				chatId,
+				"Не удалось найти клиента для этого бронирования."
+			);
+			return;
+		}
+
+		// Обновляем временной интервал бронирования
+		existingBooking.timeSlot = newTimeRange;
+		if (existingBooking.date != date) {
+			existingBooking.date = date;
+		}
+		await existingBooking.save();
+
+		await bot.sendMessage(
+			chatId,
+			`Ваше время бронирования было успешно изменено на: ${newTimeRange}`
+		);
+		await bot.sendMessage(
+			client.telegramId,
+			`${photographer.firstName} перенес(-ла) бронирование с ${originalDate} в ${oldTimeSlot} на ${date} в ${newTimeRange}`
+		);
 	} catch (error) {
 		console.error("Error during rescheduling:", error);
 		await bot.sendMessage(
