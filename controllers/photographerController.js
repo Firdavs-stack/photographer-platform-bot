@@ -626,7 +626,7 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 	await stateController.setState(chatId, {
 		state: "awaiting_date",
 		date: null,
-		selectedHours: [], // Инициализация пустого массива для выбранных промежутков
+		selectedHours: [],
 	});
 
 	// Подключаем календарь
@@ -641,16 +641,23 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 	// Отправляем календарь для выбора даты
 	await calendar.startNavCalendar({ chat: { id: chatId } });
 
-	// Обработка выбора даты
-	bot.on("callback_query", async (query) => {
+	// Удаляем предыдущие обработчики, если они существуют
+	bot.removeListener("callback_query", handleCallbackQuery);
+
+	// Определяем новый обработчик
+	async function handleCallbackQuery(query) {
 		const selectedDate = calendar.clickButtonCalendar(query);
 
-		bot.sendMessage(chatId, `${selectedDate}`);
-		// Если выбрана корректная дата
 		if (selectedDate !== -1) {
 			await checkTheBookingDate(bot, selectedDate, chatId, photographer);
+			bot.sendMessage(chatId, `Вы выбрали дату: ${selectedDate}`);
+		} else {
+			bot.sendMessage(chatId, "Неверный выбор даты, попробуйте снова.");
 		}
-	});
+	}
+
+	// Добавляем обработчик
+	bot.on("callback_query", handleCallbackQuery);
 }
 
 async function startPortfolioPhotoUpload(bot, chatId, query) {
