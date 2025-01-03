@@ -636,13 +636,7 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 
 	// Определяем новый обработчик
 	async function handleCallbackQuery(query) {
-		// Убедитесь, что callback предназначен для календаря
-		if (!query.data.startsWith("calendar")) return;
-
 		const selectedDate = calendar.clickButtonCalendar(query);
-
-		// Закрываем уведомление для пользователя
-		await bot.answerCallbackQuery(query.id);
 
 		if (selectedDate !== -1) {
 			await checkTheBookingDate(bot, selectedDate, chatId, photographer);
