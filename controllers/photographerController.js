@@ -650,9 +650,6 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 
 		if (selectedDate !== -1) {
 			await checkTheBookingDate(bot, selectedDate, chatId, photographer);
-			bot.sendMessage(chatId, `Вы выбрали дату: ${selectedDate}`);
-		} else {
-			bot.sendMessage(chatId, "Неверный выбор даты, попробуйте снова.");
 		}
 	}
 
