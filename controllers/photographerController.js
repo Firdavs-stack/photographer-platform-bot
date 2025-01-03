@@ -300,9 +300,6 @@ async function handlePhotographerMessage(
 					"Ваши реквизиты на оплату успешно обновлены."
 				);
 				break;
-			case "awaiting_date":
-				await checkTheBookingDate(bot, text, chatId, photographer);
-				break;
 			case "awaiting_bookings_date":
 				await processBookingsByDate(bot, chatId, text, photographer);
 				break;
@@ -622,13 +619,6 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 		return;
 	}
 
-	// Устанавливаем начальное состояние для выбора времени
-	await stateController.setState(chatId, {
-		state: "awaiting_date",
-		date: null,
-		selectedHours: [],
-	});
-
 	// Подключаем календарь
 	const Calendar = require("telegram-inline-calendar");
 	process.env.NTBA_FIX_319 = 1;
@@ -644,17 +634,17 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 	// Удаляем предыдущие обработчики, если они существуют
 	bot.removeListener("callback_query", handleCallbackQuery);
 
-	// // Определяем новый обработчик
-	// async function handleCallbackQuery(query) {
-	// 	const selectedDate = calendar.clickButtonCalendar(query);
+	// Определяем новый обработчик
+	async function handleCallbackQuery(query) {
+		const selectedDate = calendar.clickButtonCalendar(query);
 
-	// 	if (selectedDate !== -1) {
-	// 		await checkTheBookingDate(bot, selectedDate, chatId, photographer);
-	// 	}
-	// }
+		if (selectedDate !== -1) {
+			await checkTheBookingDate(bot, selectedDate, chatId, photographer);
+		}
+	}
 
-	// // Добавляем обработчик
-	// bot.on("callback_query", handleCallbackQuery);
+	// Добавляем обработчик
+	bot.on("callback_query", handleCallbackQuery);
 }
 
 async function startPortfolioPhotoUpload(bot, chatId, query) {
