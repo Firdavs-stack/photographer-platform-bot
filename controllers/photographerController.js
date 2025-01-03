@@ -300,9 +300,9 @@ async function handlePhotographerMessage(
 					"Ваши реквизиты на оплату успешно обновлены."
 				);
 				break;
-			case "awaiting_date":
-				await checkTheBookingDate(bot, text, chatId, photographer);
-				break;
+			// case "awaiting_date":
+			// 	await checkTheBookingDate(bot, text, chatId, photographer);
+			// 	break;
 			case "awaiting_bookings_date":
 				await processBookingsByDate(bot, chatId, text, photographer);
 				break;
@@ -443,28 +443,6 @@ async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 		date: selectedDate,
 		selectedHours: selectedSlots,
 	});
-
-	// Удаляем предыдущий обработчик, если он существует
-	bot.removeListener("callback_query", handleTimeSlotSelection);
-
-	// Определяем новый обработчик
-	async function handleTimeSlotSelection(query) {
-		const callbackData = query.data;
-		// Логика обработки выбранного временного промежутка
-		if (callbackData.startsWith("timeslot_")) {
-			const selectedTime = callbackData.replace("timeslot_", "");
-			await handleSelectedTimeSlot(
-				bot,
-				chatId,
-				selectedTime,
-				photographer
-			);
-		}
-		bot.answerCallbackQuery(query.id); // Закрываем уведомление
-	}
-
-	// Добавляем обработчик
-	bot.on("callback_query", handleTimeSlotSelection);
 
 	// Отправляем сообщение с клавиатурой таймслотов
 	await bot.sendMessage(
