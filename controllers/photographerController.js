@@ -645,6 +645,7 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 	bot.on("callback_query", async (query) => {
 		const selectedDate = calendar.clickButtonCalendar(query);
 
+		bot.sendMessage(chatId, `${selectedDate}`);
 		// Если выбрана корректная дата
 		if (selectedDate !== -1) {
 			await checkTheBookingDate(bot, selectedDate, chatId, photographer);
