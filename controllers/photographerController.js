@@ -608,6 +608,8 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 		state: "awaiting_bookings_date",
 	});
 }
+let handleCallbackQuery;
+
 async function choosePhotographerTimeSlots(bot, chatId) {
 	// Проверяем, является ли пользователь фотографом
 	const photographer = await Photographer.findOne({
@@ -631,17 +633,22 @@ async function choosePhotographerTimeSlots(bot, chatId) {
 	// Отправляем календарь для выбора даты
 	await calendar.startNavCalendar({ chat: { id: chatId } });
 
-	// Удаляем предыдущие обработчики, если они существуют
-	bot.removeListener("callback_query", handleCallbackQuery);
+	// Удаляем предыдущий обработчик, если он существует
+	if (handleCallbackQuery) {
+		bot.removeListener("callback_query", handleCallbackQuery);
+	}
 
 	// Определяем новый обработчик
-	async function handleCallbackQuery(query) {
+	handleCallbackQuery = async (query) => {
 		const selectedDate = calendar.clickButtonCalendar(query);
+
+		// Закрываем уведомление для пользователя
+		await bot.answerCallbackQuery(query.id);
 
 		if (selectedDate !== -1) {
 			await checkTheBookingDate(bot, selectedDate, chatId, photographer);
 		}
-	}
+	};
 
 	// Добавляем обработчик
 	bot.on("callback_query", handleCallbackQuery);
