@@ -412,6 +412,7 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 	await stateController.setState(chatId, {
 		state: "awaiting_bookings_date",
 	});
+	calendar.startNavCalendar(msg);
 }
 async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 	// Проверяем расписание фотографа на указанную дату
