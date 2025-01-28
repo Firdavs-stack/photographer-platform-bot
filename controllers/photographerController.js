@@ -440,15 +440,6 @@ async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 		date: selectedDate,
 		selectedHours: selectedSlots,
 	});
-
-	// Отправляем сообщение с клавиатурой таймслотов
-	await bot.sendMessage(
-		chatId,
-		`Вы выбрали дату ${selectedDate}. Выберите доступные временные промежутки:`,
-		{
-			reply_markup: { inline_keyboard: keyboard },
-		}
-	);
 }
 
 async function processSearchClient(bot, chatId, text, photographer) {
