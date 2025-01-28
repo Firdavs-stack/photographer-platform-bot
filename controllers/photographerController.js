@@ -412,7 +412,6 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 	await stateController.setState(chatId, {
 		state: "awaiting_bookings_date",
 	});
-	calendar.startNavCalendar(msg);
 }
 async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 	// Проверяем расписание фотографа на указанную дату
@@ -440,6 +439,15 @@ async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 		date: selectedDate,
 		selectedHours: selectedSlots,
 	});
+
+	// Отправляем сообщение с клавиатурой таймслотов
+	await bot.sendMessage(
+		chatId,
+		`Вы выбрали дату ${selectedDate}. Выберите доступные временные промежутки:`,
+		{
+			reply_markup: { inline_keyboard: keyboard },
+		}
+	);
 }
 
 async function processSearchClient(bot, chatId, text, photographer) {
