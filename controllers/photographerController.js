@@ -404,13 +404,8 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 					photographer,
 					res
 				);
-				await bot.sendMessage(query.message.chat.id, `${res}`);
-				calendar.startNavCalendar({ chat: { id: chatId } });
 			}
 		}
-	});
-	await stateController.setState(chatId, {
-		state: "awaiting_bookings_date",
 	});
 	calendar.startNavCalendar(msg);
 }
