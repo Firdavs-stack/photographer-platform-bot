@@ -194,8 +194,8 @@ async function initiateClientReschedule(bot, chatId, data, client) {
         Пожалуйста, обсудите с фотографом возможные новые даты и время
     `;
 
-	// Отправляем сообщение клиенту
-	await bot.sendMessage(chatId, message);
+	// // Отправляем сообщение клиенту
+	// await bot.sendMessage(chatId, message);
 
 	// Вы можете также вернуть информацию о фотографе, если необходимо для дальнейших шагов
 	return {
