@@ -409,7 +409,6 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 			}
 		}
 	});
-	calendar.startNavCalendar(msg);
 }
 async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 	// Проверяем расписание фотографа на указанную дату
