@@ -405,7 +405,6 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 					res
 				);
 				bot.sendMessage(query.message.chat.id, `${res}`);
-				calendar.startNavCalendar({ chat: { id: chatId } });
 			}
 		}
 	});
