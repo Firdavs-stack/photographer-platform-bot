@@ -938,7 +938,7 @@ async function rescheduleTimeSelectionDone(
 
 		await bot.sendMessage(
 			chatId,
-			`Ваше время бронирования было успешно изменено на: ${date} : ${newTimeRange}`
+			`Ваше время бронирования было успешно изменено на: ${date} в ${newTimeRange}`
 		);
 		await bot.sendMessage(
 			client.telegramId,
