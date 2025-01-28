@@ -391,7 +391,7 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 		date_format: "YYYY-MM-DD",
 		language: "ru",
 	});
-	bot.on("callback_query", (query) => {
+	bot.on("callback_query", async (query) => {
 		if (
 			query.message.message_id ==
 			calendar.chats.get(query.message.chat.id)
@@ -404,11 +404,15 @@ async function showPhotographerBookings(bot, chatId, photographer, msg) {
 					photographer,
 					res
 				);
-				bot.sendMessage(query.message.chat.id, `${res}`);
+				await bot.sendMessage(query.message.chat.id, `${res}`);
 				calendar.startNavCalendar({ chat: { id: chatId } });
 			}
 		}
 	});
+	await stateController.setState(chatId, {
+		state: "awaiting_bookings_date",
+	});
+	calendar.startNavCalendar(msg);
 }
 async function checkTheBookingDate(bot, selectedDate, chatId, photographer) {
 	// Проверяем расписание фотографа на указанную дату
@@ -599,10 +603,6 @@ async function processBookingsByDate(bot, chatId, text, photographer) {
 			}
 		}
 	}
-
-	await stateController.setState(chatId, {
-		state: "awaiting_bookings_date",
-	});
 }
 let handleCallbackQuery;
 
